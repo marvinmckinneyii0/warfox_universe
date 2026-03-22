@@ -15,6 +15,7 @@ export default function Nav() {
     <nav>
       <NavLink to="/" className="nav-logo">WFX / ARCHIVE v3.2.0</NavLink>
       <ul className="nav-links">
+        <li><NavLink to="/" end>Home</NavLink></li>
         <li><NavLink to="/world">World</NavLink></li>
         <li><NavLink to="/tech">Tech</NavLink></li>
         <li><NavLink to="/timeline">Timeline</NavLink></li>
