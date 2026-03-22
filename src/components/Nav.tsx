@@ -16,10 +16,7 @@ export default function Nav() {
       <NavLink to="/" className="nav-logo">WFX / ARCHIVE v3.2.0</NavLink>
       <ul className="nav-links">
         <li><NavLink to="/world">World</NavLink></li>
-        <li><NavLink to="/hxl">HXL Tech</NavLink></li>
-        <li><NavLink to="/augmentation">Aug. Classes</NavLink></li>
-        <li><NavLink to="/comparator">Comparator</NavLink></li>
-        <li><NavLink to="/exocort">Exocort</NavLink></li>
+        <li><NavLink to="/tech">Tech</NavLink></li>
         <li><NavLink to="/timeline">Timeline</NavLink></li>
         <li><NavLink to="/characters">Characters</NavLink></li>
         <li><NavLink to="/factions">Factions</NavLink></li>

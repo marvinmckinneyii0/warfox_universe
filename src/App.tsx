@@ -4,10 +4,7 @@ import Nav from './components/Nav';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import World from './pages/World';
-import HXL from './pages/HXL';
-import Augmentation from './pages/Augmentation';
-import Comparator from './pages/Comparator';
-import Exocort from './pages/Exocort';
+import Tech from './pages/Tech';
 import Timeline from './pages/Timeline';
 import Characters from './pages/Characters';
 import Factions from './pages/Factions';
@@ -65,10 +62,7 @@ function AppLayout() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/world" element={<World />} />
-        <Route path="/hxl" element={<HXL />} />
-        <Route path="/augmentation" element={<Augmentation />} />
-        <Route path="/comparator" element={<Comparator />} />
-        <Route path="/exocort" element={<Exocort />} />
+        <Route path="/tech" element={<Tech />} />
         <Route path="/timeline" element={<Timeline />} />
         <Route path="/characters" element={<Characters />} />
         <Route path="/factions" element={<Factions />} />

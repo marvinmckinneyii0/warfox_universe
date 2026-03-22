@@ -34,23 +34,8 @@ export default function Home() {
             </div>
             <div className="lore-block">
               <div className="lore-block-label">Technology</div>
-              <h3><Link to="/hxl" style={{color:'inherit',textDecoration:'none'}}>HXL Mesh Technology</Link></h3>
-              <p>The Hexalattice Interface Layer: living tissue grown from the patient's own cells, threaded through augmented tissue using the body's own developmental processes.</p>
-            </div>
-            <div className="lore-block">
-              <div className="lore-block-label">Classification</div>
-              <h3><Link to="/augmentation" style={{color:'inherit',textDecoration:'none'}}>Augmentation Classes</Link></h3>
-              <p>The global standard for classifying human biological enhancement. Class determines capability ceiling, metabolic cost, legal status, and social position.</p>
-            </div>
-            <div className="lore-block">
-              <div className="lore-block-label">Interactive</div>
-              <h3><Link to="/comparator" style={{color:'inherit',textDecoration:'none'}}>Augmentation Comparator</Link></h3>
-              <p>Adjust bioengineering parameters across augmentation classes and observe projected performance output in real time.</p>
-            </div>
-            <div className="lore-block">
-              <div className="lore-block-label">Cognitive Extension</div>
-              <h3><Link to="/exocort" style={{color:'inherit',textDecoration:'none'}}>Exocort Architecture</Link></h3>
-              <p>A cognitive-extension architecture that evolves with class, tier, and operational demand.</p>
+              <h3><Link to="/tech" style={{color:'inherit',textDecoration:'none'}}>Tech Reference</Link></h3>
+              <p>HXL Mesh architecture, augmentation classification, the interactive comparator, and exocort stages — all in one place.</p>
             </div>
             <div className="lore-block">
               <div className="lore-block-label">Historical Record</div>
