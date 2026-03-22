@@ -6,10 +6,8 @@ import Home from './pages/Home';
 import World from './pages/World';
 import Tech from './pages/Tech';
 import Timeline from './pages/Timeline';
-import Characters from './pages/Characters';
-import Factions from './pages/Factions';
+import People from './pages/People';
 import Stories from './pages/Stories';
-import Regions from './pages/Regions';
 import Glossary from './pages/Glossary';
 
 function ScrollToTop() {
@@ -64,10 +62,8 @@ function AppLayout() {
         <Route path="/world" element={<World />} />
         <Route path="/tech" element={<Tech />} />
         <Route path="/timeline" element={<Timeline />} />
-        <Route path="/characters" element={<Characters />} />
-        <Route path="/factions" element={<Factions />} />
+        <Route path="/people" element={<People />} />
         <Route path="/stories" element={<Stories />} />
-        <Route path="/regions" element={<Regions />} />
         <Route path="/glossary" element={<Glossary />} />
       </Routes>
       <Footer />

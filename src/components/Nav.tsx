@@ -18,10 +18,8 @@ export default function Nav() {
         <li><NavLink to="/world">World</NavLink></li>
         <li><NavLink to="/tech">Tech</NavLink></li>
         <li><NavLink to="/timeline">Timeline</NavLink></li>
-        <li><NavLink to="/characters">Characters</NavLink></li>
-        <li><NavLink to="/factions">Factions</NavLink></li>
+        <li><NavLink to="/people">Characters &amp; Factions</NavLink></li>
         <li><NavLink to="/stories">Lore &amp; Stories</NavLink></li>
-        <li><NavLink to="/regions">Regions</NavLink></li>
         <li><NavLink to="/glossary">Glossary</NavLink></li>
       </ul>
     </nav>
