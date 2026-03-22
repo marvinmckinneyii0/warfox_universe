@@ -1,85 +1,62 @@
-# The Warfox Sequence — World Archive
+# The Warfox Sequence — World Archive 📡
 
-**Hard biopunk. Corporate espionage. Class warfare at the cellular level.**
+> *Hard biopunk. Corporate espionage. Class warfare at the cellular level.*
 
-An interactive world-building archive for *The Warfox Sequence* hard science fiction series — a classified-document-style reference covering augmentation technology, factions, characters, regions, and canonical terminology for the 22nd-century setting.
+An interactive world-building archive for *The Warfox Sequence* — a classified-document-style reference covering augmentation technology, factions, characters, regions, and canonical terminology for a 22nd-century corporate dystopia.
 
----
-
-## Tech Stack
-
-### Archive Page (`warfox-sequence.html`)
-
-| Technology | Role |
-|---|---|
-| ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white) | Single-file archive structure |
-| ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white) | Custom design system with CSS variables |
-| ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black) | Scroll animations, IntersectionObserver, distribution module rendering |
-| ![Google Fonts](https://img.shields.io/badge/Google_Fonts-4285F4?style=flat-square&logo=google&logoColor=white) | IBM Plex Mono · Syne · Lora |
-
-### Comparator Module (`warfox_comparator/`)
-
-| Technology | Role |
-|---|---|
-| ![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB) | UI framework for the HXL Augmentation Matrix |
-| ![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white) | Build tooling |
-| ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white) | Utility-first styling |
-| ![Radix UI](https://img.shields.io/badge/Radix_UI-161618?style=flat-square&logo=radix-ui&logoColor=white) | Accessible component primitives (Slider, Collapsible, Tooltip) |
-| ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?style=flat-square&logo=shadcnui&logoColor=white) | Component system built above Radix |
-| ![Lucide](https://img.shields.io/badge/Lucide-F56565?style=flat-square&logo=lucide&logoColor=white) | Icon library |
-| ![Recharts](https://img.shields.io/badge/Recharts-22B5BF?style=flat-square&logo=recharts&logoColor=white) | Radar chart for projected performance output |
-| ![TanStack Query](https://img.shields.io/badge/TanStack_Query-FF4154?style=flat-square&logo=reactquery&logoColor=white) | Data management |
-| ![Wouter](https://img.shields.io/badge/Wouter-000000?style=flat-square&logo=react-router&logoColor=white) | Lightweight client-side routing |
-
-### Tooling
-
-| Tool | Role |
-|---|---|
-| ![Perplexity](https://img.shields.io/badge/Perplexity_AI-20808D?style=flat-square&logo=perplexity&logoColor=white) | Comparator module generated via Perplexity Computer |
-| ![Claude](https://img.shields.io/badge/Anthropic_Claude-D97706?style=flat-square&logo=anthropic&logoColor=white) | Archive architecture, worldbuilding system, iterative development |
+[![Archive](https://img.shields.io/badge/Archive-Warfox_Sequence-4ec9d4?logo=html5&logoColor=white)](./warfox-sequence.html)
+[![Version](https://img.shields.io/badge/Version-v3.2.0-2a7a82)](./warfox-sequence.html)
+[![Year](https://img.shields.io/badge/Narrative_Year-2148-8a6aa8)](./warfox-sequence.html)
+[![Status](https://img.shields.io/badge/Status-Active_Archive-22c55e)](./warfox-sequence.html)
 
 ---
 
-## File Structure
+### 📖 What's Inside
+
+- **World Foundation** — XIS discovery, HXL Mesh mechanics, platform dependency architecture, resistance network
+- **HXL Mesh Reference** — Biology, XIS variants, integration process, nanite taxonomy, symbiotic organisms, lifespan framework
+- **Augmentation Classification** — Light / Heavy / Hybrid / Titan / Omega class specs
+- **Interactive Comparator** — HXL Augmentation Matrix with parameter sliders, radar output, and canonical bounds validation
+- **Exocort Architecture** — Five-stage cognitive extension taxonomy
+- **Timeline** — Augmentation era from xenobiotic impact (~150,000 BP) to 2148
+- **Characters** — 31 active records across ParkerGen, Zero Division, AlphaGuard, Federal, and unclassified affiliations
+- **Factions** — ParkerGen, SteelCore, AlphaGuard, WarFox, FBI CZJT Force, ExoCort
+- **Regions** — Earth surface profiles + off-world settlements with augmentation distribution matrices
+- **Glossary** — 94 entries across 13 domains
+
+---
+
+## 🛠 Archive Stack
+
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![React](https://img.shields.io/badge/React-20232a?style=flat&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat&logo=tailwind-css&logoColor=white)
+![Radix UI](https://img.shields.io/badge/Radix_UI-161618?style=flat&logo=radix-ui&logoColor=white)
+![Recharts](https://img.shields.io/badge/Recharts-22B5BF?style=flat&logo=recharts&logoColor=white)
+![Google Fonts](https://img.shields.io/badge/Google_Fonts-4285F4?style=flat&logo=google&logoColor=white)
+
+## 🤖 Built With
+
+![Claude](https://img.shields.io/badge/Anthropic_Claude-D97706?style=flat&logo=anthropic&logoColor=white)
+![Perplexity](https://img.shields.io/badge/Perplexity_AI-20808D?style=flat&logo=perplexity&logoColor=white)
+
+---
+
+## 📁 File Structure
 
 ```
-warfox-sequence.html          # Main archive — fully self-contained single file
-warfox_comparator/
-  index.html                  # Comparator standalone entry (reference only)
+warfox-sequence.html      # Single self-contained archive — no build step, open in browser
+warfox_comparator/        # Comparator source (inlined into archive at build)
   assets/
-    index-*.js                # React bundle
-    index-*.css               # Tailwind output
+    index-*.js            # React bundle
+    index-*.css           # Tailwind output
 README.md
 ```
 
-> **Deployment note:** `warfox-sequence.html` embeds the comparator CSS and JS inline. It is a single self-contained file requiring no server or build step — open directly in any modern browser.
-
----
-
-## Sections
-
-| Section | Contents |
-|---|---|
-| World Foundation | XIS discovery, HXL Mesh mechanics, platform dependency, resistance |
-| HXL Mesh | Architecture, XIS variants, integration process, metabolic costs, nanite taxonomy, symbionts, lifespan framework |
-| Augmentation Classification | Light / Heavy / Hybrid / Titan / Omega tiers with full spec table |
-| Comparator | Interactive HXL Augmentation Matrix — parameter sliders, radar output, canonical bounds validation |
-| Exocort Architecture | Five-stage cognitive extension taxonomy |
-| Timeline | Augmentation era from xenobiotic impact (~150,000 BP) to 2148 |
-| Characters | 31 active records across ParkerGen, Zero Division, AlphaGuard, Federal, and unclassified affiliations |
-| Factions | ParkerGen, SteelCore, AlphaGuard, WarFox, FBI CZJT Force, ExoCort |
-| Lore & Stories | Field reports and side narratives |
-| Regions | Earth surface profiles + off-world settlements with augmentation distribution matrices |
-| Glossary | 94 entries across 13 domains: augmentation classes, biological substrate, platform infrastructure, operational terminology, XIS variants, nanite taxonomy, symbiotic organisms, lifespan and social limits |
-
----
-
-## Canon Reference
-
-Archive version: **v3.2.0**  
-Operational period: **2070–2230 CE**  
-Narrative present: **2148**  
-Classification: **Active Archive**
+> `warfox-sequence.html` embeds all comparator CSS and JS inline. One file. No server required.
 
 ---
 
