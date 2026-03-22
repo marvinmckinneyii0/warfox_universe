@@ -38,7 +38,7 @@ An interactive world-building archive for *The Warfox Sequence* — a classified
 ![Recharts](https://img.shields.io/badge/Recharts-22B5BF?style=flat&logo=recharts&logoColor=white)
 ![Google Fonts](https://img.shields.io/badge/Google_Fonts-4285F4?style=flat&logo=google&logoColor=white)
 
-## Tech Stack
+## Tools
 ![Claude](https://img.shields.io/badge/Anthropic_Claude-D97706?style=flat&logo=anthropic&logoColor=white)
 ![Perplexity](https://img.shields.io/badge/Perplexity_AI-20808D?style=flat&logo=perplexity&logoColor=white)
 
