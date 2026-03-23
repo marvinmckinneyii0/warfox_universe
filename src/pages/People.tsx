@@ -53,15 +53,6 @@ function CharactersPanel() {
         </div>
         <div className="character-card">
           <div className="char-faction-stripe stripe-parkergen"></div>
-          <div className="char-faction-tag tag-parkergen">ParkerGen / Crimson Unit</div>
-          <div className="char-name">Rayvn Hunter</div>
-          <div className="char-alias">Field Intelligence &amp; Human-Terrain Penetration Specialist: b. 2126 | d. n/a (Alive)</div>
-          <div className="char-aug">HYBRID-CLASS 4C: L4 + H3C</div>
-          <p className="char-bio">Rayvn Hunter is an independent contractor operating at the margins of the augmentation economy; taking work that established security firms will not document and solving problems that corporate legal structures cannot formally acknowledge. Her reputation is built on precision, discretion, and a completion rate that speaks for itself. Clients do not ask how. They ask when. Beneath the operational profile is something less easily classified. Hunter is known in certain circles for redistributing significant portions of her earnings into informal protection networks for augmentation-displaced communities; a pattern that sits in deliberate tension with the nature of the work that funds it. Whether this represents conscience, calculation, or something she has not named yet is not a question she invites.</p>
-          <div className="char-traits"><div className="char-trait">Hybrid</div><div className="char-trait">Hyb-4C / L4 + H3C</div><div className="char-trait">Crimson Unit</div><div className="char-trait">Threat: Extreme</div></div>
-        </div>
-        <div className="character-card">
-          <div className="char-faction-stripe stripe-parkergen"></div>
           <div className="char-faction-tag tag-parkergen">ParkerGen</div>
           <div className="char-name">Talon Hendrix Osei</div>
           <div className="char-alias">Corporate Strategy &amp; Strategic Investments: b. 2120 | d. n/a (Alive)</div>
@@ -241,6 +232,15 @@ function CharactersPanel() {
         <div style={{fontFamily:'var(--mono)',fontSize:'0.5rem',color:'var(--unknown)',letterSpacing:'0.25em',textTransform:'uppercase',padding:'0.6rem 0',borderBottom:'1px solid var(--unknown-dim)',marginBottom:'2px'}}>Unknown / Unclassified Affiliation</div>
       </div>
       <div className="char-grid" style={{marginBottom:'4rem'}}>
+        <div className="character-card">
+          <div className="char-faction-stripe stripe-unknown"></div>
+          <div className="char-faction-tag tag-unknown">Independent (Former ParkerGen / Red Unit)</div>
+          <div className="char-name">Rayvn Hunter</div>
+          <div className="char-alias">Field Intelligence &amp; Human-Terrain Penetration Specialist: b. 2126 | d. n/a (Alive)</div>
+          <div className="char-aug">HYBRID-CLASS 4C: L4 + H3C</div>
+          <p className="char-bio">Rayvn Hunter is an independent contractor (Former ParkerGen Red Unit) operating at the margins of the augmentation economy; taking work that established security firms will not document and solving problems that corporate legal structures cannot formally acknowledge. Her reputation is built on precision, discretion, and a completion rate that speaks for itself. Clients do not ask how. They ask when. Beneath the operational profile is something less easily classified. Hunter is known in certain circles for redistributing significant portions of her earnings into informal protection networks for augmentation-displaced communities; a pattern that sits in deliberate tension with the nature of the work that funds it. Whether this represents conscience, calculation, or something she has not named yet is not a question she invites.</p>
+          <div className="char-traits"><div className="char-trait">Hybrid</div><div className="char-trait">Hyb-4C / L4 + H3C</div><div className="char-trait">Independent</div><div className="char-trait">Former: Red Unit</div><div className="char-trait">Threat: Extreme</div></div>
+        </div>
         <div className="character-card">
           <div className="char-faction-stripe stripe-unknown"></div>
           <div className="char-faction-tag tag-unknown">Affiliation: Unconfirmed</div>
