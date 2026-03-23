@@ -164,7 +164,7 @@ function CharactersPanel() {
           <div className="char-faction-stripe stripe-zerodiv"></div>
           <div className="char-faction-tag tag-zerodiv">ParkerGen / Zero Division - Grey Unit</div>
           <div className="char-name">Cara Vo</div>
-          <div className="char-alias">Cybersecurity Operative / Systems Intrusion Specialist: b. 2111 | d. n/a (Alive)</div>
+          <div className="char-alias">Grey Unit Cybersecurity Operative / Systems Intrusion Specialist: b. 2111 | d. n/a (Alive)</div>
           <div className="char-aug">LIGHT-CLASS 3/4: A-B Edge</div>
           <p className="char-bio">Cara Vo is a ParkerGen intelligence operative working within the corporation's internal security infrastructure, specializing in cybersecurity and employee surveillance. Precise, methodical, and operationally invisible by design, she operates at the intersection of technical systems and human intelligence; monitoring the digital signatures of potential threats before they become institutional liabilities. Her augmentation profile supports sustained cognitive engagement across complex technical environments, enabling the kind of extended pattern recognition and system penetration that corporate counterintelligence demands. She is not a presence you notice. She is the reason certain problems never escalate.</p>
           <div className="char-traits"><div className="char-trait">Light</div><div className="char-trait">Light-3/4 A-B Edge</div><div className="char-trait">Zero Division / Grey Unit</div><div className="char-trait">Threat: High</div></div>
