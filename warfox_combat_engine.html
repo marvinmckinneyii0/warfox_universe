@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WARFOX — Combat Scenario Engine v4.0</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&f[]=satoshi@400,500,600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080b10;
+      --surface: #0e1219;
+      --surface2: #141a24;
+      --surface3: #1a2230;
+      --border: rgba(255,255,255,0.07);
+      --border-bright: rgba(255,255,255,0.14);
+      --text: #e8ecf2;
+      --text-dim: #6b7b96;
+      --text-muted: #3d4d63;
+      --accent: #00d4ff;
+      --accent-glow: rgba(0,212,255,0.15);
+      --alpha: #3b82f6;
+      --alpha-glow: rgba(59,130,246,0.2);
+      --bravo: #ec4899;
+      --bravo-glow: rgba(236,72,153,0.2);
+      --gold: #f59e0b;
+      --green: #10b981;
+      --red: #ef4444;
+      --titan: #9333ea;
+      --mono: 'IBM Plex Mono', monospace;
+      --display: 'Clash Display', sans-serif;
+      --body: 'Satoshi', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 14px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: rgba(8,11,16,0.95);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .header-logo { font-family: var(--display); font-size: 1.1rem; font-weight: 700; letter-spacing: 0.15em; color: var(--accent); text-shadow: 0 0 20px var(--accent); }
+    .header-sub { font-family: var(--mono); font-size: 0.65rem; color: var(--text-dim); letter-spacing: 0.08em; }
+    .header-mode-tabs { margin-left: auto; display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
+    .mode-tab { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.08em; padding: 5px 12px; border-radius: 5px; border: none; cursor: pointer; background: transparent; color: var(--text-dim); transition: all 0.15s; }
+    .mode-tab.active { background: var(--surface3); color: var(--accent); box-shadow: 0 0 8px var(--accent-glow); }
+    .main { display: flex; min-height: calc(100vh - 56px); }
+    .sidebar { width: 340px; flex-shrink: 0; border-right: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; max-height: calc(100vh - 56px); }
+    .arena { flex: 1; padding: 20px; overflow-y: auto; max-height: calc(100vh - 56px); }
+    .section-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.14em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+    .faction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .faction-btn { padding: 7px 10px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim); cursor: pointer; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.06em; text-align: left; transition: all 0.15s; display: flex; align-items: center; gap: 7px; }
+    .faction-btn:hover { border-color: var(--border-bright); color: var(--text); }
+    .faction-btn.selected { border-color: currentColor; background: rgba(255,255,255,0.04); font-weight: 600; }
+    .faction-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .char-grid { display: flex; flex-direction: column; gap: 5px; max-height: 320px; overflow-y: auto; }
+    .char-btn { padding: 8px 10px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim); cursor: pointer; text-align: left; transition: all 0.15s; display: flex; align-items: center; gap: 10px; }
+    .char-btn:hover { border-color: var(--border-bright); }
+    .char-btn.selected-alpha { border-color: var(--alpha); background: var(--alpha-glow); color: var(--text); }
+    .char-btn.selected-bravo { border-color: var(--bravo); background: var(--bravo-glow); color: var(--text); }
+    .char-name { font-size: 0.78rem; font-weight: 600; line-height: 1.2; }
+    .char-class { font-family: var(--mono); font-size: 0.58rem; color: var(--text-dim); letter-spacing: 0.05em; }
+    .char-badges { display: flex; gap: 4px; margin-top: 3px; flex-wrap: wrap; }
+    .badge { font-family: var(--mono); font-size: 0.52rem; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.05em; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text-dim); }
+    .badge.ability { background: rgba(0,212,255,0.08); border-color: rgba(0,212,255,0.25); color: var(--accent); }
+    .badge.tier-t1 { background: rgba(147,51,234,0.15); border-color: rgba(147,51,234,0.4); color: #a855f7; }
+    .badge.tier-5 { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.35); color: var(--accent); }
+    .badge.tier-4 { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--green); }
+    .badge.danger { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--red); }
+    .side-panel { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .side-header { padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .side-header-alpha { background: linear-gradient(90deg, var(--alpha-glow), transparent); }
+    .side-header-bravo { background: linear-gradient(90deg, var(--bravo-glow), transparent); }
+    .side-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; font-weight: 600; }
+    .count-control { display: flex; align-items: center; gap: 8px; }
+    .count-btn { width: 20px; height: 20px; border-radius: 4px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; transition: all 0.1s; }
+    .count-btn:hover { border-color: var(--border-bright); background: var(--surface3); }
+    .count-val { font-family: var(--mono); font-size: 0.75rem; min-width: 16px; text-align: center; }
+    .stat-row { display: flex; align-items: center; gap: 8px; font-size: 0.68rem; }
+    .stat-label { color: var(--text-dim); width: 80px; flex-shrink: 0; font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.04em; }
+    .stat-bar-wrap { flex: 1; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+    .stat-bar { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+    .stat-val { font-family: var(--mono); font-size: 0.62rem; color: var(--text-dim); width: 36px; text-align: right; }
+    .picker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+    .picker-btn { padding: 7px 8px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); color: var(--text-dim); cursor: pointer; font-size: 0.68rem; text-align: left; transition: all 0.15s; }
+    .picker-btn:hover { border-color: var(--border-bright); color: var(--text); }
+    .picker-btn.selected { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); }
+    .picker-icon { font-size: 0.8rem; margin-bottom: 2px; }
+    .picker-name { font-weight: 600; font-size: 0.7rem; line-height: 1.2; }
+    .picker-sub { font-size: 0.6rem; color: var(--text-muted); font-family: var(--mono); margin-top: 2px; }
+    .run-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, #0099bb, #0077aa); border: 1px solid rgba(0,212,255,0.4); border-radius: 8px; color: #fff; font-family: var(--display); font-size: 0.85rem; font-weight: 600; letter-spacing: 0.08em; cursor: pointer; transition: all 0.15s; box-shadow: 0 0 20px rgba(0,120,180,0.25); }
+    .run-btn:hover { background: linear-gradient(135deg, #00bbdd, #0099cc); box-shadow: 0 0 30px rgba(0,150,200,0.4); transform: translateY(-1px); }
+    .run-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .vs-header { display: flex; align-items: stretch; gap: 16px; margin-bottom: 20px; }
+    .vs-side { flex: 1; border-radius: 12px; padding: 16px; border: 1px solid var(--border); }
+    .vs-side-alpha { border-color: rgba(59,130,246,0.4); background: linear-gradient(135deg, rgba(59,130,246,0.08), transparent); }
+    .vs-side-bravo { border-color: rgba(236,72,153,0.4); background: linear-gradient(135deg, rgba(236,72,153,0.08), transparent); }
+    .vs-name { font-family: var(--display); font-size: 1.1rem; font-weight: 600; line-height: 1.2; }
+    .vs-callsign { font-family: var(--mono); font-size: 0.62rem; color: var(--text-dim); letter-spacing: 0.08em; margin-top: 2px; }
+    .vs-class { font-size: 0.7rem; margin-top: 8px; color: var(--text-dim); }
+    .vs-divider { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 4px; }
+    .vs-text { font-family: var(--display); font-size: 1.5rem; font-weight: 700; color: var(--text-muted); }
+    .vs-count { font-family: var(--mono); font-size: 0.62rem; color: var(--text-muted); letter-spacing: 0.06em; }
+    .ability-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+    .ability-tag { font-family: var(--mono); font-size: 0.58rem; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.04em; }
+    .ability-tag.green { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); color: var(--green); }
+    .ability-tag.blue { background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); color: var(--alpha); }
+    .ability-tag.purple { background: rgba(147,51,234,0.12); border: 1px solid rgba(147,51,234,0.35); color: #a855f7; }
+    .ability-tag.amber { background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); color: var(--gold); }
+    .ability-tag.red { background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
+    .ability-tag.cyan { background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.3); color: var(--accent); }
+    .timeline { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .round-card { border: 1px solid var(--border); border-radius: 10px; padding: 14px; background: var(--surface); animation: fadeSlide 0.3s ease both; }
+    @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .round-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .round-label { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--text-dim); }
+    .round-event { font-size: 0.62rem; color: var(--text-muted); font-family: var(--mono); }
+    .hp-bars { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .hp-bar-wrap { display: flex; flex-direction: column; gap: 3px; }
+    .hp-bar-label { font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.06em; }
+    .hp-bar-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+    .hp-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+    .hp-bar-pct { font-family: var(--mono); font-size: 0.62rem; }
+    .hp-vs { font-family: var(--mono); font-size: 0.62rem; color: var(--text-muted); text-align: center; }
+    .round-desc { font-size: 0.72rem; color: var(--text-dim); line-height: 1.5; }
+    .ability-trigger { margin-top: 8px; padding: 7px 10px; border-radius: 6px; background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.15); font-family: var(--mono); font-size: 0.62rem; color: var(--accent); }
+    .ability-trigger .trigger-label { color: var(--text-muted); margin-right: 4px; }
+    .verdict-card { border-radius: 12px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; overflow: hidden; }
+    .verdict-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% -20%, rgba(0,212,255,0.08), transparent 70%); pointer-events: none; }
+    .verdict-alpha::before { background: radial-gradient(ellipse at 50% -20%, rgba(59,130,246,0.15), transparent 70%); }
+    .verdict-bravo::before { background: radial-gradient(ellipse at 50% -20%, rgba(236,72,153,0.15), transparent 70%); }
+    .verdict-draw::before { background: radial-gradient(ellipse at 50% -20%, rgba(245,158,11,0.1), transparent 70%); }
+    .verdict-winner { font-family: var(--display); font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+    .verdict-sub { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 16px; }
+    .edge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .edge-item { padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface2); }
+    .edge-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px; }
+    .edge-holder { font-size: 0.78rem; font-weight: 600; margin-bottom: 2px; }
+    .edge-mag { font-family: var(--mono); font-size: 0.62rem; color: var(--text-dim); margin-bottom: 4px; }
+    .edge-exp { font-size: 0.68rem; color: var(--text-dim); line-height: 1.4; }
+    .citation-bar { margin-top: 20px; padding: 12px 14px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); border-left: 2px solid var(--text-muted); }
+    .citation-label { font-family: var(--mono); font-size: 0.58rem; color: var(--text-muted); margin-bottom: 4px; letter-spacing: 0.1em; }
+    .citation-text { font-size: 0.68rem; color: var(--text-dim); line-height: 1.5; font-style: italic; }
+    .org-roster { display: flex; flex-direction: column; gap: 5px; }
+    .roster-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface2); }
+    .roster-remove { margin-left: auto; width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; transition: all 0.1s; flex-shrink: 0; }
+    .roster-remove:hover { border-color: var(--red); color: var(--red); }
+    .force-gauge { height: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; overflow: hidden; display: flex; margin-top: 12px; }
+    .force-alpha { background: linear-gradient(90deg, var(--alpha), rgba(59,130,246,0.6)); transition: width 0.5s; }
+    .force-bravo { background: linear-gradient(90deg, rgba(236,72,153,0.6), var(--bravo)); margin-left: auto; transition: width 0.5s; }
+    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: var(--text-muted); text-align: center; gap: 12px; }
+    .empty-icon { font-size: 2.5rem; }
+    .empty-title { font-family: var(--display); font-size: 1rem; font-weight: 600; }
+    .empty-sub { font-size: 0.72rem; line-height: 1.5; max-width: 280px; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+    .inner-tabs { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 3px; margin-bottom: 12px; }
+    .inner-tab { flex: 1; padding: 5px; border-radius: 5px; border: none; cursor: pointer; background: transparent; color: var(--text-muted); font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.07em; transition: all 0.15s; }
+    .inner-tab.active { background: var(--surface3); color: var(--text); }
+    .tag-faction { display: inline-block; font-family: var(--mono); font-size: 0.58rem; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.06em; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div>
+    <div class="header-logo">WARFOX</div>
+    <div class="header-sub">COMBAT SCENARIO ENGINE · HXL AUGMENTATION FRAMEWORK · v4.0</div>
+  </div>
+  <div class="header-mode-tabs">
+    <button class="mode-tab active" id="tab-1v1" onclick="setMode('1v1')">1V1 DUEL</button>
+    <button class="mode-tab" id="tab-org" onclick="setMode('org')">ORG VS ORG</button>
+  </div>
+</header>
+
+<div class="main">
+  <aside class="sidebar" id="sidebar">
+    <div>
+      <div class="section-label">Combat Scenario</div>
+      <div class="picker-grid" id="scenario-picker"></div>
+    </div>
+    <div>
+      <div class="section-label">Environment</div>
+      <div class="picker-grid" id="env-picker"></div>
+    </div>
+    <div id="mode-1v1">
+      <div>
+        <div class="section-label">Alpha Combatant</div>
+        <div class="side-panel">
+          <div class="side-header side-header-alpha">
+            <span class="side-label" style="color:var(--alpha)">ALPHA SIDE</span>
+            <div class="count-control">
+              <button class="count-btn" onclick="changeCount('alpha',-1)">−</button>
+              <span class="count-val" id="alpha-count">1</span>
+              <button class="count-btn" onclick="changeCount('alpha',1)">+</button>
+            </div>
+          </div>
+          <div style="padding:10px">
+            <div class="char-grid" id="alpha-chars"></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">Bravo Combatant</div>
+        <div class="side-panel">
+          <div class="side-header side-header-bravo">
+            <span class="side-label" style="color:var(--bravo)">BRAVO SIDE</span>
+            <div class="count-control">
+              <button class="count-btn" onclick="changeCount('bravo',-1)">−</button>
+              <span class="count-val" id="bravo-count">1</span>
+              <button class="count-btn" onclick="changeCount('bravo',1)">+</button>
+            </div>
+          </div>
+          <div style="padding:10px">
+            <div class="char-grid" id="bravo-chars"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="mode-org" style="display:none">
+      <div>
+        <div class="section-label">Alpha Organization</div>
+        <div class="faction-grid" id="alpha-faction-picker"></div>
+        <div style="margin-top:8px" id="alpha-org-roster"></div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="section-label">Bravo Organization</div>
+        <div class="faction-grid" id="bravo-faction-picker"></div>
+        <div style="margin-top:8px" id="bravo-org-roster"></div>
+      </div>
+    </div>
+    <button class="run-btn" id="run-btn" onclick="runCombat()">▶ RUN SIMULATION</button>
+  </aside>
+
+  <main class="arena" id="arena">
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">⚔</div>
+      <div class="empty-title">Select Combatants & Run</div>
+      <div class="empty-sub">Choose characters or organizations, set your scenario and environment, then run the simulation. Results are based on HXL augmentation canon, Lanchester attrition modeling, and ability-weighted modifiers.</div>
+    </div>
+    <div id="results" style="display:none"></div>
+  </main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CANONICAL CHARACTER DATABASE — THE WARFOX SEQUENCE v4.0
+// All classifications canon-locked per HXL Master Reference
+// ═══════════════════════════════════════════════════════════════
+
+const FACTIONS = {
+  AlphaGuard: { color: '#3b82f6',  label: 'AlphaGuard',   emoji: '🛡' },
+  ParkerGen:  { color: '#ec4899',  label: 'ParkerGen',    emoji: '🧬' },
+  ZeroDivision:{ color: '#f43f5e', label: 'Zero Division', emoji: '◼' },
+  WarFox:     { color: '#10b981',  label: 'WarFox',       emoji: '🦊' },
+  RossNetwork:{ color: '#e879f9',  label: 'Ross Network', emoji: '🕸' },
+  SteelCore:  { color: '#eab308',  label: 'SteelCore',    emoji: '⚙' },
+  FBI:        { color: '#8b5cf6',  label: 'FBI / ACTF',   emoji: '🔵' },
+  Siberian:   { color: '#64748b',  label: 'Siberian Fed', emoji: '❄' },
+  Generic:    { color: '#6b7b96',  label: 'Generic Ops',  emoji: '⚙' },
+};
+
+const CHARACTERS = [
+
+  // ══════════════════════════════════════════════════
+  // ALPHAGUARD
+  // ══════════════════════════════════════════════════
+  {
+    id: 'lucas_kane',
+    name: 'Lucas Adisa Kane',
+    callsign: 'Shepherd / Talon Osei',
+    faction: 'AlphaGuard',
+    classLabel: 'Hybrid-5B',
+    tier: 5,
+    born: 2121,
+    bio: 'Hyb-5B: L5 dominant / H2 subordinate. C-state capable — brief H3 approximation, transient and metabolically costly. Self-engineered on Theo Kane\'s pre-commercialization research. Zero ParkerGen dependency. WarFox biological AI co-pilot integrated into cognition as parallel processing layer.',
+    specialization: 'Apex SOF. ExoCort sovereign. Cognitive supremacy, intelligent force allocation. Prediction and integration speed over brutality.',
+    strength: 9.5,
+    speed: 11.2,
+    endurance: 9.8,
+    cognition: 10.0,
+    reactionTime: 110,
+    thermalCeiling: 48,
+    durability: 8.8,
+    lethality: 10.2,
+    abilities: [
+      { id: 'c_state',      label: 'C-State Burst',       type: 'cyan',   desc: 'Brief H3-approximate output. ~40s max. Metabolically expensive, mechanically erosive if overused. Last resort.' },
+      { id: 'warfox_ai',    label: 'WarFox AI Co-Pilot',  type: 'purple', desc: 'Biological AI grown from Theo\'s research. Mimics Lucas\'s cognition. Parallel processing layer — threat mapping, OODA compression, prediction at network scale.' },
+      { id: 'exocort',      label: 'ExoCort Sovereign',   type: 'blue',   desc: 'Zero platform dependency. Self-replicating biological nanites. Immune to HXL suppression attacks.' },
+      { id: 'l5_cog',       label: 'L5 Cognition',        type: 'green',  desc: 'Near-Titan cognitive processing. Multi-target concurrent tracking. OODA loop approaching machine speed.' },
+    ],
+    modifiers: { cState: 1.35, cogEdge: 1.25, platformImmune: true },
+    status: 'active',
+  },
+
+  {
+    id: 'sonia_lopez',
+    name: 'Sonia Lopez',
+    callsign: '',
+    faction: 'AlphaGuard',
+    classLabel: 'Hybrid-5A',
+    tier: 5,
+    born: 2126,
+    bio: 'Hyb-5A — canon-locked. AlphaGuard-sponsored. Witnessed the Lopez Incident (2143) as a child. Has compiled evidence on PROJECT: FAMILIAR but awaits trustworthy insiders. INTJ-A. Hugo Lopez\'s daughter.',
+    specialization: 'Apex AlphaGuard operator. Strategic intelligence carrier. Evidence network.',
+    strength: 9.2,
+    speed: 11.0,
+    endurance: 9.5,
+    cognition: 9.5,
+    reactionTime: 115,
+    thermalCeiling: 46,
+    durability: 8.5,
+    lethality: 9.8,
+    abilities: [
+      { id: 'hyb5a',        label: 'Hybrid-5A',           type: 'cyan',   desc: 'Tier 5 AlphaGuard-sponsored platform. Full institutional augmentation support.' },
+      { id: 'apex_sof',     label: 'Apex SOF',            type: 'blue',   desc: 'AlphaGuard special operations training. All-terrain, all-condition qualified.' },
+      { id: 'dead_switch',  label: 'Evidence Carrier',    type: 'amber',  desc: 'Compiled PROJECT: FAMILIAR evidence. Value as living archive creates tactical deterrence.' },
+    ],
+    modifiers: { cogEdge: 1.18 },
+    status: 'active',
+  },
+
+  {
+    id: 'ellison_jones',
+    name: 'Ellison Maren Jones',
+    callsign: '',
+    faction: 'AlphaGuard',
+    classLabel: 'Titan-1/A',
+    tier: 6,
+    born: 2085,
+    bio: 'Titan-1/A — precision-biased, hidden. Appeared to hold Hyb-5B until Lucas Kane built AlphaGuard\'s augmentation R&D (2142–2145) using Theo\'s pre-commercialization research. Titan upgrade is downstream consequence of that architecture. Status not public. Longevity augmentation active. ESTJ.',
+    specialization: 'Strategic command. Precision Titan ops. Institutional architecture control.',
+    strength: 13.5,
+    speed: 10.0,
+    endurance: 14.0,
+    cognition: 8.5,
+    reactionTime: 95,
+    thermalCeiling: 70,
+    durability: 13.0,
+    lethality: 14.5,
+    abilities: [
+      { id: 'titan_1a',     label: 'Titan-1/A',           type: 'purple', desc: 'Platform-scale augmentation. Structural density and force output beyond all HXL tiers. Hidden status.' },
+      { id: 'precision',    label: 'Precision Bias',       type: 'cyan',   desc: 'Titan variant optimized for targeted force application over area dominance.' },
+      { id: 'longevity',    label: 'Longevity Aug',        type: 'green',  desc: 'Biological age regression. Reduced cellular degradation. Appears decades younger than birth year.' },
+      { id: 'plausible_d',  label: 'Plausible Deniability',type: 'amber', desc: 'Deliberately avoids knowing WarFox operational specifics. Institutional clean hands. Not an ally, not an obstacle.' },
+    ],
+    modifiers: { titanScale: 1.8, platformScale: true },
+    status: 'classified',
+  },
+
+  {
+    id: 'jin_soo_park',
+    name: 'Jin Soo-Park',
+    callsign: '',
+    faction: 'AlphaGuard',
+    classLabel: 'Light-3',
+    tier: 3,
+    born: 2096,
+    bio: 'L3 — Cross-cultural intelligence specialist. AlphaGuard sponsored. INFJ-A. Secondary detection risk for Lucas\'s cover: behavioral mapping, not combat. Born Busan.',
+    specialization: 'Cross-cultural intelligence. Behavioral pattern analysis. Cover detection.',
+    strength: 3.5,
+    speed: 10.5,
+    endurance: 5.0,
+    cognition: 6.5,
+    reactionTime: 195,
+    thermalCeiling: 32,
+    durability: 3.5,
+    lethality: 5.0,
+    abilities: [
+      { id: 'behavioral',   label: 'Behavioral Mapping',  type: 'blue',   desc: 'Predictive behavioral modeling at L3 processing speed. +15% cognition modifier in close-proximity engagement.' },
+      { id: 'cover_detect', label: 'Cover Detection',     type: 'purple', desc: 'Can detect cover identity inconsistencies. Primary threat to Shepherd/Talon operational security.' },
+    ],
+    modifiers: { cogEdge: 1.15 },
+    status: 'active',
+  },
+
+  {
+    id: 'rashid_al_farsi',
+    name: 'Dr. Rashid Al-Farsi',
+    callsign: '',
+    faction: 'AlphaGuard',
+    classLabel: 'Light-4',
+    tier: 4,
+    born: 2095,
+    bio: 'L4 — Empathic Interface Variant. AlphaGuard psychiatric officer. ESTJ. Born Riyadh. Greatest threat to Lucas\'s cover via psychological residue detection — reads the human behavioral signature left by WarFox AI anonymization bypasses.',
+    specialization: 'Psychiatric assessment. Empathic interface. Psychological architecture.',
+    strength: 4.0,
+    speed: 10.5,
+    endurance: 5.5,
+    cognition: 8.5,
+    reactionTime: 140,
+    thermalCeiling: 36,
+    durability: 4.0,
+    lethality: 5.0,
+    abilities: [
+      { id: 'empathic',     label: 'Empathic Interface',  type: 'purple', desc: 'Neural empathy overlay. Reads emotional state, stress signatures, psychological residue.' },
+      { id: 'psych_arch',   label: 'Psych Architecture',  type: 'blue',   desc: 'Targets cognitive decision points. Detects behavioral signature anomalies consistent with AI-to-human transition.' },
+    ],
+    modifiers: { oppCogPenalty: 0.10 },
+    status: 'active',
+  },
+
+  // ══════════════════════════════════════════════════
+  // PARKERGEN / ZERO DIVISION
+  // ══════════════════════════════════════════════════
+  {
+    id: 'raymond_parker',
+    name: 'Raymond Parker',
+    callsign: '',
+    faction: 'ParkerGen',
+    classLabel: 'Light-3',
+    tier: 3,
+    born: 2087,
+    bio: 'L3. ParkerGen CEO. ENTJ-A. Boston Brahmin heritage. Primary systemic antagonist. Killed by Rayvn Hunter at end of Book I — she knew he was her father beforehand. Multiple illegitimate children, several protected by Rayvn\'s Robin Hood operation.',
+    specialization: 'Corporate command. Systemic force projection through institutional power.',
+    strength: 3.5,
+    speed: 10.0,
+    endurance: 5.0,
+    cognition: 6.5,
+    reactionTime: 198,
+    thermalCeiling: 32,
+    durability: 3.5,
+    lethality: 5.0,
+    abilities: [
+      { id: 'ceo_auth',     label: 'CEO Authority',       type: 'red',    desc: 'Institutional command authority. Zero Division at call. Force projection through corporate state power.' },
+    ],
+    modifiers: { cogEdge: 1.1 },
+    status: 'active',
+  },
+
+  {
+    id: 'mei_chen_parker',
+    name: 'Mei Chen-Parker',
+    callsign: '',
+    faction: 'ParkerGen',
+    classLabel: 'Light-3',
+    tier: 3,
+    born: 2090,
+    bio: 'L3. ParkerGen CFO. INTJ-A. Shanghai origin. Built the financial control systems — tragic irony: they mirror the system that killed her father. Eventually provides testimony that implicates her own chain of command in the Lamb murder and Valdez investigation.',
+    specialization: 'Financial architecture. Control systems. Systemic dependency enforcement.',
+    strength: 3.5,
+    speed: 10.0,
+    endurance: 5.0,
+    cognition: 6.5,
+    reactionTime: 195,
+    thermalCeiling: 32,
+    durability: 3.5,
+    lethality: 4.5,
+    abilities: [
+      { id: 'systems_arch', label: 'Systems Architecture', type: 'cyan',  desc: 'Financial control systems architect. Knowledge of dependency enforcement mechanisms — exploitable by insiders.' },
+    ],
+    modifiers: { cogEdge: 1.1 },
+    status: 'active',
+  },
+
+  {
+    id: 'alexander_chen_parker',
+    name: 'Alexander Chen-Parker',
+    callsign: '',
+    faction: 'ZeroDivision',
+    classLabel: 'Hybrid-3C',
+    tier: 3,
+    born: 2111,
+    bio: 'Hyb-3C — canon-locked. Zero Division architect and CSO. ESTP-A. Authorized Dr. Theo Kane\'s murder (2138) and Dr. Angela Lamb assassination (2148). Son of Raymond and Mei. Emily\'s older brother. Dark Triad: high Machiavellianism, moderate narcissism, low psychopathy.',
+    specialization: 'Zero Division command. Corporate security doctrine. Institutional violence architecture.',
+    strength: 6.0,
+    speed: 8.0,
+    endurance: 7.0,
+    cognition: 7.5,
+    reactionTime: 175,
+    thermalCeiling: 36,
+    durability: 6.5,
+    lethality: 7.5,
+    abilities: [
+      { id: 'dark_triad',   label: 'High Machiavellianism', type: 'red',  desc: 'Strategic manipulation as force multiplier. Authorized murder of Dr. Theo Kane and Dr. Angela Lamb.' },
+      { id: 'zero_cmd',     label: 'Zero Division Command', type: 'amber', desc: 'Architect and CSO of Zero Division. Institutional authority over Grey/Black/Crimson units.' },
+    ],
+    modifiers: { cogEdge: 1.1, platformDep: true },
+    status: 'active',
+  },
+
+  {
+    id: 'ethan_hayes',
+    name: 'Ethan Hayes',
+    callsign: '',
+    faction: 'ZeroDivision',
+    classLabel: 'Hybrid-4A',
+    tier: 4,
+    born: 2115,
+    bio: 'Hyb-4A: L4 dominant / H2 subordinate / cognitive forward. Zero Division Black Unit. Executed Dr. Angela Lamb assassination (March 14, 2148) via focused ultrasound neural disruption device staged as cerebrovascular event. Authorized by Alexander Chen-Parker.',
+    specialization: 'Black Unit operations. Cognitive warfare. Precision asset elimination.',
+    strength: 7.0,
+    speed: 10.0,
+    endurance: 7.5,
+    cognition: 8.0,
+    reactionTime: 138,
+    thermalCeiling: 42,
+    durability: 7.0,
+    lethality: 8.8,
+    abilities: [
+      { id: 'cog_forward',  label: 'Cognitive Forward',   type: 'cyan',   desc: 'L4-dominant Hybrid. Cognitive processing as primary weapon — tactical prediction, disruption.' },
+      { id: 'black_unit',   label: 'Black Unit Protocol', type: 'red',    desc: 'Zero Division doctrine enforcement. Executed Lamb assassination via ultrasound neural disruption.' },
+      { id: 'predator',     label: 'Predator Architecture',type: 'amber', desc: 'Hunting pattern overlay. Psychological weak-point identification. Unrelenting pressure mode.' },
+    ],
+    modifiers: { cogEdge: 1.2, lethalityBonus: 1.15, platformDep: true },
+    status: 'active',
+  },
+
+  {
+    id: 'marcus_delgado',
+    name: 'Marcus Delgado',
+    callsign: '',
+    faction: 'ZeroDivision',
+    classLabel: 'Heavy-3',
+    tier: 3,
+    born: 2112,
+    bio: 'H3. Zero Division CQC specialist. ESTP-A. Filipino. Heavy-3 close-quarters combat doctrine. Army Ranger background before Zero Division recruitment.',
+    specialization: 'CQC. Zero Division enforcement. Physical dominance in close environments.',
+    strength: 7.5,
+    speed: 6.8,
+    endurance: 9.0,
+    cognition: 3.5,
+    reactionTime: 210,
+    thermalCeiling: 38,
+    durability: 8.0,
+    lethality: 8.5,
+    abilities: [
+      { id: 'h3_cqc',       label: 'H3 CQC',              type: 'red',    desc: '2.5× sustained strength. Zero Division CQC doctrine. Lethal in sub-10m engagements.' },
+    ],
+    modifiers: { enduranceBonus: 1.2, platformDep: true },
+    status: 'active',
+  },
+
+  {
+    id: 'leon_walker',
+    name: 'Leon Walker',
+    callsign: '',
+    faction: 'ZeroDivision',
+    classLabel: 'Hybrid-3A',
+    tier: 3,
+    born: 2110,
+    bio: 'Hyb-3A: L3 dominant / H1 subordinate. Zero Division operative. ISTJ. Detroit origin. Army Rangers before Zero Division. Methodical, procedure-oriented.',
+    specialization: 'Zero Division field operations. Institutional doctrine enforcement.',
+    strength: 5.5,
+    speed: 8.5,
+    endurance: 7.0,
+    cognition: 6.5,
+    reactionTime: 182,
+    thermalCeiling: 35,
+    durability: 6.0,
+    lethality: 6.5,
+    abilities: [
+      { id: 'ranger_tac',   label: 'Ranger Tactics',      type: 'blue',   desc: 'Army Ranger baseline discipline. Systematic engagement protocol. Suppression-and-advance doctrine.' },
+    ],
+    modifiers: { cogEdge: 1.05, platformDep: true },
+    status: 'active',
+  },
+
+  {
+    id: 'victor_thorn',
+    name: 'Victor Thorn',
+    callsign: 'Thorn',
+    faction: 'ParkerGen',
+    classLabel: 'Heavy-3',
+    tier: 3,
+    born: 2100,
+    bio: 'H3 — Strategic Enforcement Variant. 2.5× sustained strength, 3× endurance. L1 tactical overlay. Platform dependent — ParkerGen HXL. Enforcement architecture anchor.',
+    specialization: 'Strategic enforcement. Physical dominance. Command routing.',
+    strength: 7.5,
+    speed: 7.0,
+    endurance: 9.0,
+    cognition: 3.5,
+    reactionTime: 195,
+    thermalCeiling: 38,
+    durability: 8.0,
+    lethality: 8.5,
+    abilities: [
+      { id: 'h3_enforce',   label: 'H3 Enforcement',      type: 'red',    desc: '2.5× sustained strength. Heavy structural frame built for prolonged force engagement.' },
+      { id: 'platform_dep', label: 'Platform Dependent',  type: 'red',    desc: 'ParkerGen HXL dependency. Suppressor exposure causes augmentation degradation.' },
+    ],
+    modifiers: { enduranceBonus: 1.3, platformDep: true },
+    status: 'active',
+  },
+
+  {
+    id: 'emily_chen_parker',
+    name: 'Emily Chen-Parker',
+    callsign: 'Phantom',
+    faction: 'ParkerGen',
+    classLabel: 'Hybrid-3A',
+    tier: 3,
+    born: 2121,
+    bio: 'Hyb-3A: L3 dominant / H1 subordinate. gNexGen ParkerGen dynasty. VP Legal Affairs. Building independent evidentiary record as Phantom. INFJ. Must not read as Lucas\'s asset — progressively reciprocal threat to him. Younger sister of Alexander. Daughter of Raymond and Mei.',
+    specialization: 'Corporate intelligence. Evidence collection. Covert resistance architecture.',
+    strength: 5.0,
+    speed: 9.5,
+    endurance: 6.0,
+    cognition: 7.0,
+    reactionTime: 170,
+    thermalCeiling: 34,
+    durability: 5.5,
+    lethality: 6.0,
+    abilities: [
+      { id: 'phantom',      label: 'Phantom (Operative)',  type: 'purple', desc: 'Covert identity. Independent evidentiary record of ParkerGen crimes. Not a WarFox asset.' },
+      { id: 'corp_intel',   label: 'Dynasty Intelligence', type: 'blue',   desc: 'Insider access to ParkerGen evidence. Pattern recognition and institutional architecture knowledge.' },
+      { id: 'gnexgen',      label: 'gNexGen Heritage',     type: 'green',  desc: 'Gestational NexGen — designed from conception. Peak hybrid integration efficiency for tier.' },
+    ],
+    modifiers: { evasionBonus: 1.2 },
+    status: 'active',
+  },
+
+  {
+    id: 'maria_rodriguez',
+    name: 'Maria Rodriguez',
+    callsign: '',
+    faction: 'ParkerGen',
+    classLabel: 'Hybrid-3A',
+    tier: 3,
+    born: 2112,
+    bio: 'Hyb-3A: L3 dominant / H3 subordinate. Biochemical specialist and medic. ~2–2.5× strength, ~2.5–3× endurance. Platform dependent. Combat medic function.',
+    specialization: 'Biochemical warfare. Field medicine. Augmentation-aware toxicology.',
+    strength: 6.2,
+    speed: 7.5,
+    endurance: 8.5,
+    cognition: 6.5,
+    reactionTime: 185,
+    thermalCeiling: 38,
+    durability: 7.0,
+    lethality: 7.0,
+    abilities: [
+      { id: 'biochem',      label: 'Biochemical Warfare',  type: 'amber', desc: 'Platform-specific disruption compounds. Augmentation-aware toxicology synthesis.' },
+      { id: 'field_med',    label: 'Combat Medic',         type: 'green', desc: 'Field augmentation repair. Extends operational window for self and allies mid-engagement.' },
+    ],
+    modifiers: { enduranceBonus: 1.15, selfRepair: true, platformDep: true },
+    status: 'active',
+  },
+
+  {
+    id: 'cara_vo',
+    name: 'Cara Vo',
+    callsign: '',
+    faction: 'ZeroDivision',
+    classLabel: 'Hybrid-3A',
+    tier: 3,
+    born: 2111,
+    bio: 'Hyb-3A: L3 dominant / H1 subordinate. Zero Division Grey Unit, cybersecurity. ENTJ. Vietnamese. Turned by Lucas. WarFox affiliation non-public — public cover is ParkerGen intelligence operative.',
+    specialization: 'Cybersecurity. Grey Unit operations. Double agent network architecture.',
+    strength: 5.0,
+    speed: 9.0,
+    endurance: 6.0,
+    cognition: 8.0,
+    reactionTime: 165,
+    thermalCeiling: 34,
+    durability: 5.5,
+    lethality: 6.0,
+    abilities: [
+      { id: 'grey_unit',    label: 'Grey Unit Cyber',      type: 'cyan',   desc: 'ParkerGen network topology specialist. Zero Division cybersecurity architecture.' },
+      { id: 'double_agent', label: 'Double Agent',         type: 'purple', desc: 'Dual allegiance. ParkerGen system access reporting to WarFox network.' },
+    ],
+    modifiers: { cogEdge: 1.15, platformDep: true },
+    status: 'active',
+  },
+
+  {
+    id: 'rayvn_hunter',
+    name: 'Rayvn Hunter',
+    callsign: '',
+    faction: 'ZeroDivision',
+    classLabel: 'Hybrid-4C',
+    tier: 4,
+    born: 2126,
+    bio: 'Hyb-4C: L4 forward / H3 subordinate. Former Zero Division Crimson Unit. ISTP-A. Reaction time ~170ms — fastest non-Titan in cast. No platform dependency. Knew Raymond Parker was her father before Book I. Learned Raymond caused mother Vanessa\'s suicide via Lucas. Killed Raymond at end of Book I. Post-Book I: unmanaged apex asset.',
+    specialization: 'Crimson Unit strike. Fastest sub-Titan reflexes. Robin Hood redistribution op.',
+    strength: 8.5,
+    speed: 11.5,
+    endurance: 8.0,
+    cognition: 7.5,
+    reactionTime: 170,
+    thermalCeiling: 44,
+    durability: 7.5,
+    lethality: 10.5,
+    abilities: [
+      { id: 'fastest_sub',  label: 'Fastest Sub-Titan',   type: 'cyan',   desc: '~170ms reaction time — fastest non-Titan in the Warfox cast. Consistent initiative supremacy.' },
+      { id: 'plat_immune',  label: 'Platform Independent',type: 'green',  desc: 'No HXL dependency. Cannot be suppressed or degraded via platform attacks.' },
+      { id: 'crimson',      label: 'Crimson Unit',         type: 'red',    desc: 'Zero Division elite strike. High-intensity short-engagement doctrine. Killed Raymond Parker.' },
+    ],
+    modifiers: { reactionBonus: 0.85, platformImmune: true },
+    status: 'active',
+  },
+
+  {
+    id: 'damien_shaw',
+    name: 'Damien Shaw',
+    callsign: '',
+    faction: 'ZeroDivision',
+    classLabel: 'Hybrid-3B',
+    tier: 3,
+    born: 2107,
+    bio: 'Hyb-3B: L2 dominant / H3 subordinate. Zero Division enforcer. Physical-forward hybrid profile at tier 3. Corporate enforcement operations.',
+    specialization: 'Corporate enforcement. Physical suppression. Hybrid physical-forward doctrine.',
+    strength: 6.5,
+    speed: 7.5,
+    endurance: 7.5,
+    cognition: 5.5,
+    reactionTime: 200,
+    thermalCeiling: 37,
+    durability: 7.0,
+    lethality: 7.5,
+    abilities: [
+      { id: 'physical_fwd', label: 'Physical Forward',    type: 'amber',  desc: 'H-dominant Hybrid at tier 3. Physical output exceeds cognitive utility — suppression role.' },
+    ],
+    modifiers: { enduranceBonus: 1.1, platformDep: true },
+    status: 'active',
+  },
+
+  // ══════════════════════════════════════════════════
+  // WARFOX (Non-public affiliations shown here)
+  // ══════════════════════════════════════════════════
+  {
+    id: 'zakia_williams',
+    name: 'Zakia Amara Williams',
+    callsign: '',
+    faction: 'WarFox',
+    classLabel: 'Light-4',
+    tier: 4,
+    born: 2122,
+    bio: 'L4 cognitive systems architect. INTP. WarFox affiliation non-public — public cover is HR director. Cognitive infrastructure and augmentation architecture specialist.',
+    specialization: 'Cognitive systems architecture. Augmentation platform analysis. Network operations.',
+    strength: 4.0,
+    speed: 10.5,
+    endurance: 5.5,
+    cognition: 8.5,
+    reactionTime: 135,
+    thermalCeiling: 36,
+    durability: 4.2,
+    lethality: 5.5,
+    abilities: [
+      { id: 'cog_arch',     label: 'Cognitive Architecture',type: 'cyan', desc: 'Systems-level augmentation design. Can exploit architecture flaws in other HXL platforms.' },
+      { id: 'wf_net',       label: 'WarFox Network',        type: 'green', desc: 'Embedded in WarFox intelligence grid. Covert positional advantage in cyber environments.' },
+    ],
+    modifiers: { cogEdge: 1.2, oppPlatformPenalty: 0.08 },
+    status: 'active',
+  },
+
+  {
+    id: 'cam_ochoa',
+    name: 'Ilhicamina "Cam" Ochoa',
+    callsign: 'Cam',
+    faction: 'WarFox',
+    classLabel: 'Light-3',
+    tier: 3,
+    born: 2117,
+    bio: 'L3 bio-energy specialist. ENTP. WarFox affiliation non-public — public cover is ParkerGen Operations Division, Systems & Logistics.',
+    specialization: 'Bio-energy systems. Operational logistics. WarFox field support.',
+    strength: 3.5,
+    speed: 10.5,
+    endurance: 5.0,
+    cognition: 6.5,
+    reactionTime: 195,
+    thermalCeiling: 32,
+    durability: 3.5,
+    lethality: 5.0,
+    abilities: [
+      { id: 'bio_energy',   label: 'Bio-Energy Specialist', type: 'green', desc: 'Augmentation energy systems expert. Can optimize or degrade bio-energy output in field conditions.' },
+      { id: 'logistics',    label: 'Logistics Cover',        type: 'blue',  desc: 'ParkerGen Operations Division access. Supply chain intelligence for WarFox.' },
+    ],
+    modifiers: { cogEdge: 1.1 },
+    status: 'active',
+  },
+
+  {
+    id: 'rachel_yassin',
+    name: 'Rachel Yassin',
+    callsign: '',
+    faction: 'WarFox',
+    classLabel: 'Light-4A',
+    tier: 4,
+    born: 2113,
+    bio: 'L4A — Bio-Neural Symbiosis variant. INFP-T. ParkerGen defector. ParkerGen weaponized her ecosystem research for the 2145 Tigris Basin collapse (her ancestral homeland). Enhanced sensory processing for biological signals — processes chemical/electrical signals into intuitive understanding. Zero combat capability. Empathic overload risk; requires solitude recovery.',
+    specialization: 'Ecosystem pattern recognition. Biological intelligence. Non-combat WarFox asset.',
+    strength: 2.5,
+    speed: 9.0,
+    endurance: 4.5,
+    cognition: 8.5,
+    reactionTime: 145,
+    thermalCeiling: 32,
+    durability: 2.5,
+    lethality: 2.0,
+    abilities: [
+      { id: 'bio_neural',   label: 'Bio-Neural Symbiosis',  type: 'green', desc: 'Empathic resonance with biological systems. Ecosystem pattern recognition and threat sensing at environmental scale.' },
+      { id: 'sensory_proc', label: 'Enhanced Sensory Processing', type: 'cyan', desc: 'Biological signal processing into intuitive tactical understanding. Effective in natural environments only.' },
+      { id: 'emp_overload', label: 'Empathic Overload Risk', type: 'red',  desc: 'Zero combat capability. Urban/industrial environments overwhelm sensory stack. Recovery time required.' },
+    ],
+    modifiers: { cogEdge: 1.2 },
+    status: 'active',
+  },
+
+  // ══════════════════════════════════════════════════
+  // KASSANDRA KANE
+  // ══════════════════════════════════════════════════
+  {
+    id: 'kassandra_kane',
+    name: 'Kassandra Aminata Kane',
+    callsign: '',
+    faction: 'WarFox',
+    classLabel: 'Light-1',
+    tier: 1,
+    born: 2093,
+    bio: 'L1 augmentation. INFJ psychiatrist. Co-developed the APM framework with Dr. Theo Kane — confirmed as his unnamed collaborating psychiatrist. Married Theo 2117. Morally flexible vs. Theo\'s ISTJ rigidity. Raised both sons transnationally. Lucas thread: finding her is a key narrative discovery.',
+    specialization: 'Psychological evaluation. APM framework co-author. Institutional knowledge of pre-commercialization research.',
+    strength: 1.5,
+    speed: 7.0,
+    endurance: 2.0,
+    cognition: 2.5,
+    reactionTime: 278,
+    thermalCeiling: 23,
+    durability: 1.5,
+    lethality: 1.5,
+    abilities: [
+      { id: 'apm_author',   label: 'APM Co-Author',         type: 'cyan',  desc: 'Co-developed Augmentation Potential Matrix with Theo Kane. Pre-commercialization clinical framework.' },
+      { id: 'psych_eval',   label: 'Psychiatric Evaluation', type: 'blue', desc: 'Trained psychiatrist. Psychological assessment and narrative-level threat to institutional concealment.' },
+    ],
+    modifiers: {},
+    status: 'active',
+  },
+
+  // ══════════════════════════════════════════════════
+  // ROSS NETWORK
+  // ══════════════════════════════════════════════════
+  {
+    id: 'malcolm_ross',
+    name: 'Dr. Malcolm Ross',
+    callsign: '',
+    faction: 'RossNetwork',
+    classLabel: 'Titan (Self-Made)',
+    tier: 6,
+    born: 2109,
+    bio: 'Self-made Titan-Class. ENTP-A. Former ParkerGen researcher turned transhumanist absolutist. Metabolic Furnace Engine — dangerous mechanism with limited safe uses remaining. Body is the main weapon. No institutional platform dependency.',
+    specialization: 'Strategic operations. Platform-scale combat. Transhumanist ideological warfare.',
+    strength: 14.0,
+    speed: 8.5,
+    endurance: 12.0,
+    cognition: 9.0,
+    reactionTime: 105,
+    thermalCeiling: 55,
+    durability: 13.5,
+    lethality: 15.0,
+    abilities: [
+      { id: 'furnace',      label: 'Metabolic Furnace Engine', type: 'red',   desc: 'Self-made Titan-scale aug. Catastrophic force output — limited remaining safe use cycles before structural failure.' },
+      { id: 'body_weapon',  label: 'Body as Main Weapon',     type: 'amber', desc: 'Minimalist hardware. Maximum biological integration. Resistant to electronic suppression.' },
+      { id: 'self_titan',   label: 'Self-Sovereign Titan',    type: 'purple', desc: 'No institutional platform dependency. Self-made augmentation architecture.' },
+    ],
+    modifiers: { titanScale: 1.9, furnaceLimitedUse: true, platformImmune: true },
+    status: 'active',
+  },
+
+  {
+    id: 'nadja_morozova',
+    name: 'Nadja Morozova',
+    callsign: '',
+    faction: 'RossNetwork',
+    classLabel: 'Heavy-4',
+    tier: 4,
+    born: 2113,
+    bio: 'H4. ISTP. Siberian Federation military origin. Augmentation-Induced Depigmentation Syndrome — naturally white hair, brows, and lashes. Ross Network affiliation.',
+    specialization: 'Heavy combat. Shock assault. Industrial-grade sustained force.',
+    strength: 9.5,
+    speed: 7.5,
+    endurance: 10.0,
+    cognition: 5.5,
+    reactionTime: 180,
+    thermalCeiling: 42,
+    durability: 9.5,
+    lethality: 10.5,
+    abilities: [
+      { id: 'shock_doc',    label: 'Siberian Shock Doctrine', type: 'red',   desc: 'Siberian Federation H4 military doctrine — overwhelming force vector, decisive short-engagement.' },
+      { id: 'aids',         label: 'AIDS Physiology',         type: 'amber', desc: 'Augmentation-Induced Depigmentation Syndrome. Visible indicator of extreme platform saturation density.' },
+    ],
+    modifiers: { enduranceBonus: 1.2, durabilityBonus: 1.15 },
+    status: 'active',
+  },
+
+  {
+    id: 'alaia_dekker',
+    name: 'Alaia Verin Dekker',
+    callsign: '',
+    faction: 'RossNetwork',
+    classLabel: 'Hybrid-1',
+    tier: 1,
+    born: 2116,
+    bio: 'L4 architecture, Hybrid-1 integration. INTJ. Rotterdam origin. Cognitive tactical operative working with Dr. Malcolm Ross. Low-visibility intelligence and strategic analysis.',
+    specialization: 'Intelligence. Counter-intelligence. Strategic analysis for Ross Network.',
+    strength: 4.5,
+    speed: 10.0,
+    endurance: 5.5,
+    cognition: 8.0,
+    reactionTime: 145,
+    thermalCeiling: 34,
+    durability: 4.5,
+    lethality: 5.5,
+    abilities: [
+      { id: 'counterint',   label: 'Counter-Intelligence',   type: 'cyan',  desc: 'Ross Network strategic analysis. Adversary modeling at institutional scale.' },
+      { id: 'low_vis',      label: 'Low-Visibility Profile', type: 'green', desc: 'Minimal augmentation signature. Difficult to detect or track in surveillance environments.' },
+    ],
+    modifiers: { cogEdge: 1.15 },
+    status: 'active',
+  },
+
+  // ══════════════════════════════════════════════════
+  // STEELCORE
+  // ══════════════════════════════════════════════════
+  {
+    id: 'hugo_lopez',
+    name: 'Hugo Lopez',
+    callsign: '',
+    faction: 'SteelCore',
+    classLabel: 'Titan-1/A (Hidden)',
+    tier: 6,
+    born: 2087,
+    bio: 'Titan-1/A — hidden. ENTJ. Former AlphaGuard co-founder. SteelCore recruited him believing him to be an exceptional Hyb-5 operative. True Titan capability undisclosed. Maria Lopez\'s husband — Maria killed in failed rescue (consequence of Lucas\'s decision to monitor rather than warn). Book 2 arc: recruited asset → disillusioned operative → existential threat to SteelCore upon discovering PROJECT: FAMILIAR scope.',
+    specialization: 'Hidden Titan. Creates threat ceiling above Lucas Kane. Consequence engine.',
+    strength: 13.8,
+    speed: 10.5,
+    endurance: 13.5,
+    cognition: 8.0,
+    reactionTime: 98,
+    thermalCeiling: 68,
+    durability: 13.5,
+    lethality: 15.5,
+    abilities: [
+      { id: 'hidden_titan', label: 'Hidden Titan Status',    type: 'purple', desc: 'Titan-1/A. SteelCore believes him to be Hybrid-5. True capability constitutes the threat ceiling above Lucas.' },
+      { id: 'threat_ceil',  label: 'Threat Ceiling',          type: 'red',    desc: 'Creates credible force ceiling above all Hyb-5 operators. Strategic architecture of Book 2 conflict.' },
+      { id: 'institution',  label: 'AlphaGuard Founder',     type: 'blue',   desc: 'Co-founded AlphaGuard. Full institutional knowledge of AlphaGuard architecture and doctrine.' },
+    ],
+    modifiers: { titanScale: 1.85, platformScale: true },
+    status: 'classified',
+  },
+
+  {
+    id: 'marcus_steele',
+    name: 'Marcus Steele',
+    callsign: '',
+    faction: 'SteelCore',
+    classLabel: 'Hybrid-4B',
+    tier: 4,
+    born: 2100,
+    bio: 'Hyb-4B: H4 dominant / L2 subordinate. SteelCore Leadership Triumvirate, tactical director. Physical-forward Hybrid-4 — force application over cognition. PROJECT: FAMILIAR architect alongside ATLAS.',
+    specialization: 'Tactical operations. Physical-forward hybrid command. SteelCore force projection.',
+    strength: 9.0,
+    speed: 8.5,
+    endurance: 9.5,
+    cognition: 5.5,
+    reactionTime: 165,
+    thermalCeiling: 44,
+    durability: 9.0,
+    lethality: 10.5,
+    abilities: [
+      { id: 'h_fwd_hyb4',   label: 'H-Forward Hybrid-4',   type: 'amber', desc: 'Physical-dominant Hybrid-4. Force application over cognitive processing — SteelCore tactical doctrine.' },
+      { id: 'project_fam',  label: 'PROJECT: FAMILIAR',    type: 'red',   desc: 'SteelCore aerosol neuroparasite program. Turns civilians into sleeper assassins. Stolen from Lucas\'s therapeutic research.' },
+    ],
+    modifiers: { enduranceBonus: 1.15, platformDep: true },
+    status: 'active',
+  },
+
+  {
+    id: 'miranda_steele',
+    name: 'Miranda Steele',
+    callsign: '',
+    faction: 'SteelCore',
+    classLabel: 'Hybrid-3A',
+    tier: 3,
+    born: 2102,
+    bio: 'Hyb-3A: L3 dominant / H1 subordinate. SteelCore Leadership Triumvirate, legal and PR director. Cognitive-forward — institutional armor over force projection.',
+    specialization: 'Legal architecture. Corporate PR. Institutional defense — SteelCore\'s external face.',
+    strength: 5.0,
+    speed: 9.0,
+    endurance: 6.0,
+    cognition: 7.0,
+    reactionTime: 178,
+    thermalCeiling: 33,
+    durability: 5.5,
+    lethality: 5.5,
+    abilities: [
+      { id: 'inst_armor',   label: 'Institutional Armor',   type: 'cyan',  desc: 'Legal and PR architecture. Delays exposure of PROJECT: FAMILIAR. SteelCore\'s outer defensive layer.' },
+    ],
+    modifiers: { cogEdge: 1.1, platformDep: true },
+    status: 'active',
+  },
+
+  // ══════════════════════════════════════════════════
+  // FBI / ACTF
+  // ══════════════════════════════════════════════════
+  {
+    id: 'veronica_valdez',
+    name: 'Veronica Valdez',
+    callsign: '',
+    faction: 'FBI',
+    classLabel: 'Hybrid-3B',
+    tier: 3,
+    born: 2114,
+    bio: 'Hyb-3B: L3 dominant / H2 subordinate — canon-locked. FBI ACTF. ISTJ-A. Puerto Rican heritage. Augmentation debt creates economic bondage to FBI. Investigates Angela Lamb\'s death from institutional side. Arc: discovers procedure inside a corrupt system does not produce justice. Mei\'s testimony eventually reveals her chain of command was complicit.',
+    specialization: 'Forensic augmentation investigation. ACTF jurisdiction. Institutional justice.',
+    strength: 5.5,
+    speed: 8.5,
+    endurance: 7.0,
+    cognition: 7.5,
+    reactionTime: 168,
+    thermalCeiling: 35,
+    durability: 6.0,
+    lethality: 6.5,
+    abilities: [
+      { id: 'forensic_cog', label: 'Forensic Cognition',    type: 'cyan',  desc: 'Evidence pattern recognition at augmented processing speed. Crime-scene specialization at L3.' },
+      { id: 'aug_debt',     label: 'Augmentation Debt',     type: 'red',   desc: 'Economic bondage to FBI. Full institutional support, but no independent operation authority.' },
+      { id: 'actf_auth',    label: 'ACTF Authority',        type: 'blue',  desc: 'Augmentation Crimes Task Force. Access to suppressor assets and platform data. Investigates Lamb murder.' },
+    ],
+    modifiers: { cogEdge: 1.12 },
+    status: 'active',
+  },
+
+];
+
+// ═══════════════════════════════════════════════════════════════
+// GENERIC OPERATOR ARCHETYPES — HXL CLASSIFICATION SCIENCE
+// All tiers: Light L1–L5, Heavy H1–H5, Hybrid Hy1–Hy5,
+// Titan T1–T3, Baseline
+// ═══════════════════════════════════════════════════════════════
+
+const GENERIC_OPERATORS = [
+  // LIGHT CLASS — cognitive dominant, minimal structure, peak mobility
+  { id:'g_L0', name:'Light-1',  callsign:'', faction:'Generic', classLabel:'Light-1',  tier:1, isGeneric:true, genericClass:'Light', born:null,
+    bio:'L1 — Entry cognitive aug. ~1.1× cognition, basic sensory enhancement. Tactical overlay and IFF. Minimal physical modification.',
+    specialization:'Entry-level augmentation. Tactical overlay.',
+    strength:1.8, speed:7.5, endurance:2.5, cognition:2.5, reactionTime:280, thermalCeiling:25, durability:1.8, lethality:2.2,
+    abilities:[{ id:'l1_tac', label:'L1 Tactical Overlay', type:'blue', desc:'Basic HUD targeting and IFF. Minimal OODA compression.' }],
+    modifiers:{}, status:'active' },
+  { id:'g_L2', name:'Light-2',  callsign:'', faction:'Generic', classLabel:'Light-2',  tier:2, isGeneric:true, genericClass:'Light', born:null,
+    bio:'L2 — Intermediate cognitive aug. ~1.5–2× cognition. Sensory stack. PNS optimization for motor speed.',
+    specialization:'Tactical ISR. Precision engagement. Light SOF support.',
+    strength:2.5, speed:9.0, endurance:3.5, cognition:4.5, reactionTime:235, thermalCeiling:28, durability:2.5, lethality:3.5,
+    abilities:[
+      { id:'l2_sensory', label:'Sensory Stack', type:'blue', desc:'Enhanced visual/auditory processing. ~1.5× threat detection range.' },
+      { id:'l2_pns', label:'PNS Optimization', type:'green', desc:'Peripheral nervous system tuning. Improved motor response coordination.' },
+    ], modifiers:{ cogEdge:1.1 }, status:'active' },
+  { id:'g_L3', name:'Light-3',  callsign:'', faction:'Generic', classLabel:'Light-3',  tier:3, isGeneric:true, genericClass:'Light', born:null,
+    bio:'L3 — Advanced cognitive aug. ~2–3× cognition. Full tactical processing suite. Reaction time substantially compressed.',
+    specialization:'Advanced intelligence. Cognitive warfare support.',
+    strength:3.5, speed:10.5, endurance:5.0, cognition:6.5, reactionTime:195, thermalCeiling:32, durability:3.5, lethality:5.0,
+    abilities:[
+      { id:'l3_tac', label:'Full Tactical Suite', type:'cyan', desc:'2–3× cognitive throughput. Multi-source threat integration. Predictive engagement.' },
+      { id:'l3_react', label:'Compressed Reaction', type:'green', desc:'Neural pathway optimization. Reaction time well below unaugmented baseline.' },
+    ], modifiers:{ cogEdge:1.2 }, status:'active' },
+  { id:'g_L4', name:'Light-4',  callsign:'', faction:'Generic', classLabel:'Light-4',  tier:4, isGeneric:true, genericClass:'Light', born:null,
+    bio:'L4 — Elite cognitive aug. ~3–5× cognition. Near-instantaneous threat mapping. OODA loop approaching machine speed.',
+    specialization:'Strategic cognitive ops. Elite SOF support.',
+    strength:4.5, speed:11.0, endurance:6.0, cognition:8.5, reactionTime:145, thermalCeiling:36, durability:4.5, lethality:6.0,
+    abilities:[
+      { id:'l4_ooda', label:'OODA Compression', type:'cyan', desc:'Observe-Orient-Decide-Act cycle compressed near machine speed.' },
+      { id:'l4_mob', label:'L4 Mobility', type:'green', desc:'Full light-class speed platform. Fastest class at tier.' },
+    ], modifiers:{ cogEdge:1.25 }, status:'active' },
+  { id:'g_L5', name:'Light-5',  callsign:'', faction:'Generic', classLabel:'Light-5',  tier:5, isGeneric:true, genericClass:'Light', born:null,
+    bio:'L5 — Apex cognitive aug. Near-Titan cognitive processing. ~5–8× baseline cognition. Reaction time approaching Titan threshold.',
+    specialization:'Apex cognitive ops. Strategic command overlay. Pre-Titan cognitive ceiling.',
+    strength:5.5, speed:12.0, endurance:7.0, cognition:10.0, reactionTime:115, thermalCeiling:40, durability:5.5, lethality:7.0,
+    abilities:[
+      { id:'l5_apex', label:'Apex Cognition', type:'cyan', desc:'5–8× baseline throughput. Pre-Titan processing ceiling. L-class pinnacle.' },
+      { id:'l5_spd', label:'L5 Peak Mobility', type:'green', desc:'Maximum L-class speed. Fastest ground mobility in non-Titan classification.' },
+    ], modifiers:{ cogEdge:1.3, mobilityBonus:1.1 }, status:'active' },
+
+  // HEAVY CLASS — structural dominant, force multiplication
+  { id:'g_H1', name:'Heavy-1',  callsign:'', faction:'Generic', classLabel:'Heavy-1',  tier:1, isGeneric:true, genericClass:'Heavy', born:null,
+    bio:'H1 — Entry structural aug. ~1.3× strength, ~1.5× endurance. Skeletal reinforcement only. Platform dependency begins at H2.',
+    specialization:'Physical labor augmentation. Force security baseline.',
+    strength:3.0, speed:6.5, endurance:4.5, cognition:1.8, reactionTime:290, thermalCeiling:26, durability:3.5, lethality:3.5,
+    abilities:[{ id:'h1_skel', label:'Skeletal Reinforcement', type:'amber', desc:'Basic skeletal density increase. Impact resistance +30%.' }],
+    modifiers:{}, status:'active' },
+  { id:'g_H2', name:'Heavy-2',  callsign:'', faction:'Generic', classLabel:'Heavy-2',  tier:2, isGeneric:true, genericClass:'Heavy', born:null,
+    bio:'H2 — Intermediate structural aug. ~1.5–2× strength, ~2× endurance. Myofibril density increase. Platform dependency emerges.',
+    specialization:'Close-quarters force. Breach and suppress.',
+    strength:5.0, speed:6.5, endurance:6.5, cognition:2.5, reactionTime:260, thermalCeiling:30, durability:5.5, lethality:5.5,
+    abilities:[
+      { id:'h2_myo', label:'Myofibril Enhancement', type:'amber', desc:'~1.5–2× sustained force. Myofibril density and skeletal architecture upgraded.' },
+      { id:'h2_dep', label:'Platform Dependent', type:'red', desc:'HXL dependency initiates at H2. Suppressor vulnerability introduced.' },
+    ], modifiers:{ platformDep:true }, status:'active' },
+  { id:'g_H3', name:'Heavy-3',  callsign:'', faction:'Generic', classLabel:'Heavy-3',  tier:3, isGeneric:true, genericClass:'Heavy', born:null,
+    bio:'H3 — Advanced structural aug. 2.5× sustained strength, 3× endurance. Substantial vascular and musculoskeletal reengineering.',
+    specialization:'Heavy assault. Sustained force application.',
+    strength:7.5, speed:6.8, endurance:9.0, cognition:3.5, reactionTime:210, thermalCeiling:38, durability:8.0, lethality:8.5,
+    abilities:[
+      { id:'h3_force', label:'2.5× Sustained Force', type:'amber', desc:'2.5× sustained output. Vascular reengineering for prolonged engagement.' },
+      { id:'h3_end', label:'3× Endurance', type:'red', desc:'3× endurance ceiling. Elevated mitochondrial density, VO2 max.' },
+    ], modifiers:{ enduranceBonus:1.2, platformDep:true }, status:'active' },
+  { id:'g_H4', name:'Heavy-4',  callsign:'', faction:'Generic', classLabel:'Heavy-4',  tier:4, isGeneric:true, genericClass:'Heavy', born:null,
+    bio:'H4 — Elite structural aug. ~3.5–4× strength, ~4× endurance. Full systemic structural reengineering. Thermal management active.',
+    specialization:'Industrial heavy assault. Anti-vehicle. Siege operations.',
+    strength:9.5, speed:6.5, endurance:10.5, cognition:4.5, reactionTime:185, thermalCeiling:44, durability:10.0, lethality:11.0,
+    abilities:[
+      { id:'h4_ind', label:'Industrial Force Output', type:'red', desc:'~3.5–4× strength. Full structural reengineering with thermal management.' },
+      { id:'h4_therm', label:'Thermal Management', type:'amber', desc:'Integrated cooling architecture. Extended high-output operations.' },
+    ], modifiers:{ enduranceBonus:1.25, durabilityBonus:1.2, platformDep:true }, status:'active' },
+  { id:'g_H5', name:'Heavy-5',  callsign:'', faction:'Generic', classLabel:'Heavy-5',  tier:5, isGeneric:true, genericClass:'Heavy', born:null,
+    bio:'H5 — Apex structural aug. ~5× strength, ~5× endurance. Pre-Titan structural density. Platform-critical dependency.',
+    specialization:'Pre-Titan heavy assault. Structural demolition. Apex force vector.',
+    strength:12.0, speed:6.0, endurance:13.0, cognition:5.0, reactionTime:175, thermalCeiling:52, durability:13.5, lethality:13.5,
+    abilities:[
+      { id:'h5_pre', label:'Pre-Titan Output', type:'red', desc:'~5× strength. Structural density approaching Titan threshold.' },
+      { id:'h5_crit', label:'Platform Critical', type:'amber', desc:'Full HXL platform critical dependency. Suppressor = rapid catastrophic degradation.' },
+    ], modifiers:{ enduranceBonus:1.35, durabilityBonus:1.3, platformDep:true }, status:'active' },
+
+  // HYBRID CLASS — coupling tax, L/H integration
+  { id:'g_Hy1', name:'Hybrid-1', callsign:'', faction:'Generic', classLabel:'Hybrid-1', tier:1, isGeneric:true, genericClass:'Hybrid', born:null,
+    bio:'Hyb-1 — Entry hybrid. ~1.2× strength, ~1.2× cognition. Coupling tax present. Broad-spectrum but shallow.',
+    specialization:'General augmentation baseline. Versatility over specialization.',
+    strength:2.5, speed:7.5, endurance:3.0, cognition:3.0, reactionTime:265, thermalCeiling:27, durability:2.8, lethality:3.0,
+    abilities:[{ id:'hy1_broad', label:'Broad-Spectrum Aug', type:'blue', desc:'Entry L/H integration. Coupling tax reduces peak output vs. single-class.' }],
+    modifiers:{ platformDep:true }, status:'active' },
+  { id:'g_Hy2', name:'Hybrid-2', callsign:'', faction:'Generic', classLabel:'Hybrid-2', tier:2, isGeneric:true, genericClass:'Hybrid', born:null,
+    bio:'Hyb-2 — Intermediate hybrid. ~1.5× strength, ~1.8× cognition. Coupling tax managed.',
+    specialization:'Versatile SOF. Balanced engagement profile.',
+    strength:4.5, speed:8.5, endurance:5.5, cognition:5.0, reactionTime:240, thermalCeiling:31, durability:4.5, lethality:5.0,
+    abilities:[{ id:'hy2_int', label:'L/H Integration', type:'blue', desc:'Improved coupling management. Balanced physical/cognitive output.' }],
+    modifiers:{ cogEdge:1.05, platformDep:true }, status:'active' },
+  { id:'g_Hy3', name:'Hybrid-3', callsign:'', faction:'Generic', classLabel:'Hybrid-3', tier:3, isGeneric:true, genericClass:'Hybrid', born:null,
+    bio:'Hyb-3 — Advanced hybrid. ~2–2.5× strength, ~2.5–3× cognition. Standard Zero Division / institutional aug level.',
+    specialization:'Standard institutional SOF. Corporate enforcement. Advanced operator baseline.',
+    strength:6.0, speed:8.5, endurance:7.0, cognition:7.0, reactionTime:180, thermalCeiling:36, durability:6.5, lethality:7.0,
+    abilities:[
+      { id:'hy3_bal', label:'Balanced Hybrid', type:'cyan', desc:'2–2.5× strength, 2.5–3× cognition. Standard institutional augmentation.' },
+      { id:'hy3_tax', label:'Coupling Tax', type:'red', desc:'L/H coupling creates metabolic overhead. Peaks lower than single-class equivalents.' },
+    ], modifiers:{ cogEdge:1.1, platformDep:true }, status:'active' },
+  { id:'g_Hy4', name:'Hybrid-4', callsign:'', faction:'Generic', classLabel:'Hybrid-4', tier:4, isGeneric:true, genericClass:'Hybrid', born:null,
+    bio:'Hyb-4 — Elite hybrid. ~3× strength, ~3.5× cognition. Coupling architecture optimized.',
+    specialization:'Elite institutional operator. Black-unit level.',
+    strength:8.0, speed:10.0, endurance:8.5, cognition:8.5, reactionTime:148, thermalCeiling:42, durability:8.0, lethality:9.5,
+    abilities:[
+      { id:'hy4_opt', label:'Optimized Coupling', type:'cyan', desc:'Coupling architecture refined. L/H outputs approach theoretical dual-integration maximum.' },
+      { id:'hy4_eli', label:'Elite Operator', type:'blue', desc:'Surpasses single-class at equivalent tier in combined engagement scenarios.' },
+    ], modifiers:{ cogEdge:1.15, platformDep:true }, status:'active' },
+  { id:'g_Hy5', name:'Hybrid-5', callsign:'', faction:'Generic', classLabel:'Hybrid-5', tier:5, isGeneric:true, genericClass:'Hybrid', born:null,
+    bio:'Hyb-5 — Apex hybrid. ~4–5× strength, ~5× cognition. Near-complete L/H integration. The apex of standard HXL classification.',
+    specialization:'Apex institutional operator. Maximum non-Titan augmentation tier.',
+    strength:9.5, speed:11.5, endurance:10.0, cognition:10.0, reactionTime:118, thermalCeiling:47, durability:9.0, lethality:10.5,
+    abilities:[
+      { id:'hy5_apex', label:'Apex Hybrid', type:'cyan', desc:'Near-complete L/H integration. Coupling tax minimized. Maximum non-Titan output.' },
+      { id:'hy5_crit', label:'Platform Critical', type:'red', desc:'Full HXL critical dependency. Institutional support required for sustained operation.' },
+    ], modifiers:{ cogEdge:1.2, platformDep:true }, status:'active' },
+
+  // TITAN CLASS — beyond HXL tier system
+  { id:'g_T1', name:'Titan-1',   callsign:'', faction:'Generic', classLabel:'Titan-1',   tier:6, isGeneric:true, genericClass:'Titan', born:null,
+    bio:'Titan-1 — Entry Titan-class. Beyond HXL tier system. Structural density and force output that overwhelms any Hybrid-5.',
+    specialization:'Platform-scale combat. Institutional apex asset.',
+    strength:13.5, speed:9.5, endurance:13.0, cognition:8.0, reactionTime:100, thermalCeiling:65, durability:13.5, lethality:14.5,
+    abilities:[
+      { id:'t1_scale', label:'Titan-Scale Output', type:'purple', desc:'Platform-scale force. Structural density beyond Hyb-5 maximum. Outside HXL classification.' },
+      { id:'t1_class', label:'Classified Status', type:'amber', desc:'Titan designation suppressed in most institutional records.' },
+    ], modifiers:{ titanScale:1.75, platformScale:true }, status:'classified' },
+  { id:'g_T2', name:'Titan-2',   callsign:'', faction:'Generic', classLabel:'Titan-2',   tier:6, isGeneric:true, genericClass:'Titan', born:null,
+    bio:'Titan-2 — Hardened Titan. Battle-tested platform with sustained operational history. Structural refinements from field stress.',
+    specialization:'Veteran Titan asset. Proven in sustained ops. Endurance-weighted profile.',
+    strength:14.5, speed:9.0, endurance:15.0, cognition:8.5, reactionTime:98, thermalCeiling:72, durability:15.0, lethality:15.5,
+    abilities:[
+      { id:'t2_hard', label:'Hardened Platform', type:'purple', desc:'Battle-stress structural refinement. Improved load-bearing under sustained engagement.' },
+      { id:'t2_end', label:'Extended Ceiling', type:'amber', desc:'Expanded thermal ceiling from operational conditioning. Longer peak output than T1.' },
+    ], modifiers:{ titanScale:1.88, platformScale:true }, status:'classified' },
+  { id:'g_T3', name:'Titan-3',   callsign:'', faction:'Generic', classLabel:'Titan-3',   tier:6, isGeneric:true, genericClass:'Titan', born:null,
+    bio:'Titan-3 — Theoretical apex Titan. Maximum documented augmentation density. Very few confirmed T3 operators exist.',
+    specialization:'Apex Titan. Maximum documented augmentation. Near the limit of biological architecture.',
+    strength:16.0, speed:8.5, endurance:17.0, cognition:9.0, reactionTime:92, thermalCeiling:85, durability:17.5, lethality:18.0,
+    abilities:[
+      { id:'t3_apex', label:'Apex Titan Class', type:'purple', desc:'Maximum documented augmentation density. Force output approaches biological limits.' },
+      { id:'t3_lim', label:'Biological Limit', type:'red', desc:'Operates near theoretical ceiling. Structural failure risk at extreme output.' },
+    ], modifiers:{ titanScale:2.1, platformScale:true }, status:'classified' },
+
+  // BASELINE
+  { id:'g_BASE', name:'Unaugmented', callsign:'', faction:'Generic', classLabel:'Baseline Human', tier:0, isGeneric:true, genericClass:'Baseline', born:null,
+    bio:'Trained, fit adult. No augmentation. ~50kg force output, 270–300ms reaction time. Reference anchor for all HXL scaling.',
+    specialization:'Baseline combat reference. Unaugmented comparator.',
+    strength:1.0, speed:6.5, endurance:1.0, cognition:1.0, reactionTime:285, thermalCeiling:22, durability:1.0, lethality:1.0,
+    abilities:[], modifiers:{}, status:'active' },
+];
+
+const ALL_OPERATORS = [...CHARACTERS, ...GENERIC_OPERATORS];
+
+// ═══════════════════════════════════════════════════════════════
+// SCENARIOS & ENVIRONMENTS
+// ═══════════════════════════════════════════════════════════════
+
+const SCENARIOS = [
+  { id:'cqb',       icon:'⚔',  label:'CQB',          sub:'0–10m',     roundDur:1.5,  mods:{ strength:1.3, speed:0.7,  cognition:1.2 }, cite:'Tueller drill: 21ft in 1.5s; draw-to-fire ~1.43s (Lewinski & Hudson, 2003).' },
+  { id:'urban',     icon:'🏙', label:'Urban',         sub:'10–100m',   roundDur:8,    mods:{ strength:1.0, speed:1.0,  cognition:1.3 }, cite:'Urban combat ~30–80m (Scales, 2003; US Army MOUT FM 3-06).' },
+  { id:'open',      icon:'🏔', label:'Open Field',    sub:'100–500m',  roundDur:15,   mods:{ strength:0.8, speed:1.3,  cognition:1.1 }, cite:'Avg rifle engagement ~300m (US Army Weapons School).' },
+  { id:'ambush',    icon:'🎯', label:'Ambush',        sub:'30m init',  roundDur:3,    mods:{ strength:0.9, speed:1.1,  cognition:1.5 }, cite:'Action beats reaction by ~250ms baseline (Welchman, 2010).' },
+  { id:'attrition', icon:'⏱', label:'Attrition',     sub:'Extended',  roundDur:60,   mods:{ strength:0.9, speed:0.9,  cognition:1.0 }, cite:'Lanchester linear law; thermal collapse at 40°C core (Gonzalez-Alonso et al., 1999).' },
+];
+
+const ENVIRONMENTS = [
+  { id:'temperate', icon:'🌲', label:'Temperate',      sub:'15–25°C',      thermalMod:1.0,  mobilityMod:1.0,   cite:'Baseline ~500W heat rejection at 20°C (Sawka et al., 2011).' },
+  { id:'desert',    icon:'☀',  label:'Desert',          sub:'40°C+',         thermalMod:0.5,  mobilityMod:0.9,   cite:'Core temp +0.15°C/min heavy exertion at 40°C (Taylor & Tipton, 2014).' },
+  { id:'arctic',    icon:'❄',  label:'Arctic',          sub:'−20°C+',        thermalMod:1.8,  mobilityMod:0.8,   cite:'Cold exposure increases metabolic demand 2–3× vs temperate (Doubt, 1991).' },
+  { id:'urban_int', icon:'🏢', label:'Urban Interior',  sub:'Controlled',    thermalMod:1.1,  mobilityMod:0.85,  cite:'Restricted corridors increase close-engagement frequency (FM 3-06).' },
+  { id:'zero_g',    icon:'🌌', label:'Zero-G',          sub:'Space/Orbital', thermalMod:0.6,  mobilityMod:0.5,   cite:'Muscle force output drops ~20% in microgravity (Fitts et al., 2010).' },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+
+let state = {
+  mode: '1v1',
+  scenario: SCENARIOS[0],
+  env: ENVIRONMENTS[0],
+  alpha: { char: CHARACTERS[0], count: 1, tab: 'canon' },
+  bravo: { char: CHARACTERS[13], count: 1, tab: 'canon' },
+  orgAlpha: { faction: 'AlphaGuard', roster: [] },
+  orgBravo: { faction: 'ParkerGen',  roster: [] },
+};
+
+// ═══════════════════════════════════════════════════════════════
+// GENERIC GROUPS
+// ═══════════════════════════════════════════════════════════════
+
+const GENERIC_GROUPS = [
+  { key:'Light',    label:'Light Class',   color:'#10b981', desc:'Cognitive dominant. L1–L5',  ids:['g_L0','g_L2','g_L3','g_L4','g_L5'] },
+  { key:'Heavy',    label:'Heavy Class',   color:'#ef4444', desc:'Structural dominant. H1–H5', ids:['g_H1','g_H2','g_H3','g_H4','g_H5'] },
+  { key:'Hybrid',   label:'Hybrid Class',  color:'#00d4ff', desc:'Balanced L/H. Hy1–Hy5',     ids:['g_Hy1','g_Hy2','g_Hy3','g_Hy4','g_Hy5'] },
+  { key:'Titan',    label:'Titan Class',   color:'#a855f7', desc:'Platform-scale. T1–T3',      ids:['g_T1','g_T2','g_T3'] },
+  { key:'Baseline', label:'Baseline',      color:'#6b7b96', desc:'Unaugmented reference',      ids:['g_BASE'] },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// INIT & RENDER
+// ═══════════════════════════════════════════════════════════════
+
+function init() {
+  renderScenarios();
+  renderEnvironments();
+  render1v1Chars();
+  renderOrgPickers();
+}
+
+function setMode(m) {
+  state.mode = m;
+  document.getElementById('tab-1v1').classList.toggle('active', m==='1v1');
+  document.getElementById('tab-org').classList.toggle('active', m==='org');
+  document.getElementById('mode-1v1').style.display = m==='1v1' ? '' : 'none';
+  document.getElementById('mode-org').style.display = m==='org' ? '' : 'none';
+  hideResults();
+}
+
+function renderScenarios() {
+  document.getElementById('scenario-picker').innerHTML = SCENARIOS.map(s=>`
+    <button class="picker-btn ${state.scenario.id===s.id?'selected':''}" onclick="selectScenario('${s.id}')">
+      <div class="picker-icon">${s.icon}</div>
+      <div class="picker-name">${s.label}</div>
+      <div class="picker-sub">${s.sub}</div>
+    </button>`).join('');
+}
+
+function renderEnvironments() {
+  document.getElementById('env-picker').innerHTML = ENVIRONMENTS.map(e=>`
+    <button class="picker-btn ${state.env.id===e.id?'selected':''}" onclick="selectEnv('${e.id}')">
+      <div class="picker-icon">${e.icon}</div>
+      <div class="picker-name">${e.label}</div>
+      <div class="picker-sub">${e.sub}</div>
+    </button>`).join('');
+}
+
+function tierBadge(c) {
+  if (c.tier>=6) return `<span class="badge tier-t1">TITAN</span>`;
+  if (c.tier>=5) return `<span class="badge tier-5">TIER ${c.tier}</span>`;
+  if (c.tier>=4) return `<span class="badge tier-4">TIER ${c.tier}</span>`;
+  return `<span class="badge">TIER ${c.tier}</span>`;
+}
+
+function charRowHTML(c, side) {
+  const otherSide = side==='alpha' ? 'bravo' : 'alpha';
+  const isSelected = state[side].char?.id===c.id;
+  const isOther = state[otherSide].char?.id===c.id;
+  const cls = isSelected ? `selected-${side}` : '';
+  const factionColor = FACTIONS[c.faction]?.color || '#6b7b96';
+  return `
+    <button class="char-btn ${cls}" onclick="selectChar('${side}','${c.id}')">
+      <div style="flex:1;min-width:0">
+        <div class="char-name">${c.name}${c.callsign?` <span style="color:var(--text-dim);font-weight:400;font-size:0.7rem">· ${c.callsign}</span>`:''}${c.born?` <span style="color:var(--text-muted);font-weight:400;font-size:0.62rem">b.${c.born}</span>`:''}</div>
+        <div class="char-class">${c.classLabel} <span style="color:${factionColor};font-size:0.55rem">· ${FACTIONS[c.faction]?.label||c.faction}</span></div>
+        <div class="char-badges">
+          ${tierBadge(c)}
+          ${c.status==='classified'?'<span class="badge danger">CLASSIFIED</span>':''}
+          ${c.abilities.length>0?`<span class="badge ability">${c.abilities[0].label}</span>`:''}
+        </div>
+      </div>
+      ${isOther?`<div style="font-size:0.6rem;color:var(--${otherSide==='alpha'?'alpha':'bravo'});font-family:var(--mono)">${otherSide.toUpperCase()}</div>`:''}
+    </button>`;
+}
+
+function render1v1Chars() {
+  ['alpha','bravo'].forEach(side => {
+    const el = document.getElementById(`${side}-chars`);
+    const tab = state[side].tab || 'canon';
+    if (tab==='canon') {
+      // Group canon chars by faction
+      const factionOrder = ['AlphaGuard','ZeroDivision','ParkerGen','WarFox','RossNetwork','SteelCore','FBI'];
+      let html = `
+        <div class="inner-tabs">
+          <button class="inner-tab active" onclick="setCharTab('${side}','canon')">CANON CHARS</button>
+          <button class="inner-tab" onclick="setCharTab('${side}','generic')">GENERIC OPS</button>
+        </div>`;
+      factionOrder.forEach(fKey => {
+        const chars = CHARACTERS.filter(c => c.faction===fKey);
+        if (!chars.length) return;
+        const f = FACTIONS[fKey];
+        html += `<div style="margin-bottom:6px">
+          <div style="font-family:var(--mono);font-size:0.55rem;letter-spacing:0.1em;color:${f.color};margin-bottom:3px;padding:0 2px;display:flex;align-items:center;gap:5px">
+            <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:${f.color};flex-shrink:0"></span>
+            ${f.label.toUpperCase()}
+          </div>
+          ${chars.map(c => charRowHTML(c, side)).join('')}
+        </div>`;
+      });
+      el.innerHTML = html;
+    } else {
+      const selectedId = state[side].char?.id;
+      let html = `
+        <div class="inner-tabs">
+          <button class="inner-tab" onclick="setCharTab('${side}','canon')">CANON CHARS</button>
+          <button class="inner-tab active" onclick="setCharTab('${side}','generic')">GENERIC OPS</button>
+        </div>`;
+      GENERIC_GROUPS.forEach(grp => {
+        const ops = GENERIC_OPERATORS.filter(o => grp.ids.includes(o.id));
+        html += `<div style="margin-bottom:10px">
+          <div style="font-family:var(--mono);font-size:0.58rem;letter-spacing:0.1em;color:${grp.color};margin-bottom:5px;padding:0 2px;display:flex;align-items:center;gap:6px">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${grp.color};flex-shrink:0"></span>
+            ${grp.label.toUpperCase()}
+            <span style="color:var(--text-muted);font-size:0.55rem">${grp.desc}</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            ${ops.map(c => {
+              const isSelected = selectedId===c.id;
+              const otherSide = side==='alpha'?'bravo':'alpha';
+              const isOther = state[otherSide].char?.id===c.id;
+              return `<button class="char-btn ${isSelected?'selected-'+side:''}" onclick="selectChar('${side}','${c.id}')">
+                <div style="flex:1;min-width:0">
+                  <div class="char-name" style="font-size:0.75rem">${c.name}</div>
+                  <div class="char-class">${c.classLabel}</div>
+                  <div class="char-badges">${tierBadge(c)}${c.tier>=6?'<span class="badge danger">CLASSIFIED</span>':''}</div>
+                </div>
+                ${isOther?`<div style="font-size:0.6rem;color:var(--${otherSide==='alpha'?'alpha':'bravo'});font-family:var(--mono)">${otherSide.toUpperCase()}</div>`:''}
+              </button>`;
+            }).join('')}
+          </div>
+        </div>`;
+      });
+      el.innerHTML = html;
+    }
+  });
+}
+
+function renderOrgPickers() {
+  ['alpha','bravo'].forEach(side => {
+    const el = document.getElementById(`${side}-faction-picker`);
+    const selected = state[`org${side[0].toUpperCase()+side.slice(1)}`].faction;
+    const canonFactions = Object.entries(FACTIONS).filter(([k])=>k!=='Generic');
+    el.innerHTML = `
+      <div style="grid-column:1/-1;font-family:var(--mono);font-size:0.56rem;color:var(--text-muted);letter-spacing:0.08em;margin-bottom:2px">CANON FACTIONS</div>
+      ${canonFactions.map(([key,f])=>`
+        <button class="faction-btn ${selected===key?'selected':''}" style="${selected===key?`color:${f.color}`:''}" onclick="selectOrgFaction('${side}','${key}')">
+          <div class="faction-dot" style="background:${f.color}"></div>${f.label}
+        </button>`).join('')}
+      <div style="grid-column:1/-1;font-family:var(--mono);font-size:0.56rem;color:var(--text-muted);letter-spacing:0.08em;margin:6px 0 2px">GENERIC POOL</div>
+      <button class="faction-btn ${selected==='Generic'?'selected':''}" style="${selected==='Generic'?'color:#6b7b96':''};grid-column:1/-1" onclick="selectOrgFaction('${side}','Generic')">
+        <div class="faction-dot" style="background:#6b7b96"></div>Generic Operators (All Classes)
+      </button>`;
+    renderOrgRoster(side);
+  });
+}
+
+function renderOrgRoster(side) {
+  const orgState = state[`org${side[0].toUpperCase()+side.slice(1)}`];
+  const el = document.getElementById(`${side}-org-roster`);
+  const isGeneric = orgState.faction==='Generic';
+  const factionChars = isGeneric ? GENERIC_OPERATORS : ALL_OPERATORS.filter(c=>c.faction===orgState.faction&&!c.isGeneric);
+  const rosterIds = orgState.roster.map(r=>r.id);
+
+  const rosterHTML = orgState.roster.length>0 ? `
+    <div class="section-label" style="margin-top:10px">Active Roster (${orgState.roster.length})</div>
+    <div class="org-roster">
+      ${orgState.roster.map(r=>{
+        const c = ALL_OPERATORS.find(x=>x.id===r.id);
+        return `<div class="roster-item">
+          <div><div style="font-size:0.72rem;font-weight:600">${c.name}</div><div style="font-family:var(--mono);font-size:0.58rem;color:var(--text-dim)">${c.classLabel}</div></div>
+          <div class="count-control">
+            <button class="count-btn" onclick="changeOrgCount('${side}','${r.id}',-1)">−</button>
+            <span class="count-val">${r.count}</span>
+            <button class="count-btn" onclick="changeOrgCount('${side}','${r.id}',1)">+</button>
+          </div>
+          <button class="roster-remove" onclick="removeOrgChar('${side}','${r.id}')">×</button>
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  if (isGeneric) {
+    el.innerHTML = `
+      <div class="section-label" style="margin-top:8px">Generic Operator Pool</div>
+      ${GENERIC_GROUPS.map(grp=>{
+        const ops = GENERIC_OPERATORS.filter(o=>grp.ids.includes(o.id));
+        return `<div style="margin-bottom:8px">
+          <div style="font-family:var(--mono);font-size:0.56rem;letter-spacing:0.1em;color:${grp.color};margin-bottom:4px;padding:0 2px">${grp.label.toUpperCase()}</div>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            ${ops.map(c=>{
+              const isIn = rosterIds.includes(c.id);
+              return `<button class="char-btn ${isIn?'selected-'+side:''}" onclick="toggleOrgChar('${side}','${c.id}')">
+                <div style="flex:1;min-width:0"><div class="char-name" style="font-size:0.72rem">${c.name}</div><div class="char-class">${c.classLabel}</div></div>
+                ${isIn?`<span style="color:var(--${side==='alpha'?'alpha':'bravo'});font-size:0.8rem">✓</span>`:''}
+              </button>`;
+            }).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+      ${rosterHTML}`;
+  } else {
+    const fColor = FACTIONS[orgState.faction]?.color||'#6b7b96';
+    el.innerHTML = `
+      <div class="section-label" style="margin-top:8px">Select Combatants</div>
+      <div class="char-grid" style="max-height:200px">
+        ${factionChars.map(c=>{
+          const isIn = rosterIds.includes(c.id);
+          return `<button class="char-btn ${isIn?'selected-'+side:''}" onclick="toggleOrgChar('${side}','${c.id}')">
+            <div style="flex:1;min-width:0">
+              <div class="char-name">${c.name}</div>
+              <div class="char-class">${c.classLabel}</div>
+              <div class="char-badges">${tierBadge(c)}</div>
+            </div>
+            ${isIn?`<span style="color:var(--${side==='alpha'?'alpha':'bravo'});font-size:0.8rem">✓</span>`:''}
+          </button>`;
+        }).join('')}
+      </div>
+      ${rosterHTML}`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INTERACTIONS
+// ═══════════════════════════════════════════════════════════════
+
+function selectScenario(id) { state.scenario = SCENARIOS.find(s=>s.id===id); renderScenarios(); hideResults(); }
+function selectEnv(id) { state.env = ENVIRONMENTS.find(e=>e.id===id); renderEnvironments(); hideResults(); }
+function setCharTab(side, tab) { state[side].tab = tab; render1v1Chars(); }
+function selectChar(side, id) {
+  const c = ALL_OPERATORS.find(x=>x.id===id);
+  if (c) { state[side].char = c; render1v1Chars(); hideResults(); }
+}
+function changeCount(side, delta) {
+  state[side].count = Math.max(1, Math.min(20, state[side].count+delta));
+  document.getElementById(`${side}-count`).textContent = state[side].count;
+  hideResults();
+}
+function selectOrgFaction(side, fac) {
+  const key = `org${side[0].toUpperCase()+side.slice(1)}`;
+  state[key].faction = fac;
+  state[key].roster = [];
+  renderOrgPickers();
+  hideResults();
+}
+function toggleOrgChar(side, id) {
+  const key = `org${side[0].toUpperCase()+side.slice(1)}`;
+  const existing = state[key].roster.find(r=>r.id===id);
+  if (existing) state[key].roster = state[key].roster.filter(r=>r.id!==id);
+  else state[key].roster.push({ id, count:1 });
+  renderOrgRoster(side);
+  hideResults();
+}
+function changeOrgCount(side, id, delta) {
+  const key = `org${side[0].toUpperCase()+side.slice(1)}`;
+  const item = state[key].roster.find(r=>r.id===id);
+  if (item) item.count = Math.max(1, Math.min(20, item.count+delta));
+  renderOrgRoster(side);
+  hideResults();
+}
+function removeOrgChar(side, id) {
+  const key = `org${side[0].toUpperCase()+side.slice(1)}`;
+  state[key].roster = state[key].roster.filter(r=>r.id!==id);
+  renderOrgRoster(side);
+  hideResults();
+}
+function hideResults() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('empty-state').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMBAT ENGINE
+// ═══════════════════════════════════════════════════════════════
+
+function getEffectiveStats(c, scenario, env) {
+  const sm = scenario.mods;
+  let str    = c.strength   * sm.strength;
+  let spd    = c.speed      * sm.speed;
+  let cog    = c.cognition  * sm.cognition;
+  let end    = c.endurance;
+  let react  = c.reactionTime;
+  let lethal = c.lethality;
+  let dur    = c.durability;
+  let therm  = c.thermalCeiling * env.thermalMod;
+  const m = c.modifiers || {};
+  if (m.cogEdge)         cog    *= m.cogEdge;
+  if (m.enduranceBonus)  end    *= m.enduranceBonus;
+  if (m.lethalityBonus)  lethal *= m.lethalityBonus;
+  if (m.durabilityBonus) dur    *= m.durabilityBonus;
+  if (m.mobilityBonus)   spd    *= m.mobilityBonus;
+  if (m.reactionBonus)   react  *= m.reactionBonus;
+  if (m.titanScale)      { str *= m.titanScale; lethal *= m.titanScale; dur *= m.titanScale; end *= 1.5; }
+  if (env.id==='zero_g') { const cogRatio=cog/str; if(cogRatio>1.5) cog*=1.2; else str*=0.75; }
+  spd *= env.mobilityMod;
+  return { str, spd, cog, end, react, lethal, dur, therm, cStateMult: m.cState||1.0 };
+}
+
+function computeCombat(alphaChars, bravoChars, scenario, env) {
+  const agg = (chars) => {
+    const total = chars.reduce((acc,{char,count})=>{
+      const s = getEffectiveStats(char, scenario, env);
+      return { str:acc.str+s.str*count, spd:acc.spd+s.spd*count, cog:acc.cog+s.cog*count,
+               end:acc.end+s.end*count, react:acc.react+s.react, lethal:acc.lethal+s.lethal*count,
+               dur:acc.dur+s.dur*count, therm:acc.therm+s.therm*count, n:acc.n+count,
+               cStateMult:Math.max(acc.cStateMult,s.cStateMult) };
+    }, { str:0,spd:0,cog:0,end:0,react:0,lethal:0,dur:0,therm:0,n:0,cStateMult:1 });
+    const n = total.n;
+    return { str:total.str/n, spd:total.spd/n, cog:total.cog/n, end:total.end/n,
+             react:total.react/chars.length, lethal:total.lethal/n, dur:total.dur/n,
+             therm:total.therm/n, count:n, cStateMult:total.cStateMult };
+  };
+  const alphaStats = agg(alphaChars);
+  const bravoStats = agg(bravoChars);
+  const fp = (s) => { const cogMod=1+(s.cog-1)*0.2; const spdMod=Math.min(1,s.spd/10); return s.lethal*cogMod*spdMod; };
+  const alphaFP = fp(alphaStats);
+  const bravoFP = fp(bravoStats);
+  const k=0.1;
+  let alphaHP = alphaStats.count*100, bravoHP = bravoStats.count*100;
+  const maxA=alphaHP, maxB=bravoHP;
+  const rounds=[];
+  let elapsed=0;
+  const reactDiff = bravoStats.react - alphaStats.react;
+  const initWinner = reactDiff>0?'alpha':reactDiff<0?'bravo':'even';
+  const initDmg = Math.abs(reactDiff)/1000*(initWinner==='alpha'?alphaFP:bravoFP)*60;
+  if (initWinner==='alpha') bravoHP -= initDmg;
+  else if (initWinner==='bravo') alphaHP -= initDmg;
+  rounds.push({ id:'initiative', label:'Initiative Phase',
+    desc: initWinner==='even' ? 'Matched reaction speeds — simultaneous first engagement.' :
+      `${initWinner==='alpha'?alphaChars[0].char.name.split(' ').pop():bravoChars[0].char.name.split(' ').pop()} reacts ${Math.abs(reactDiff).toFixed(0)}ms faster — first-shot advantage applied.`,
+    alphaHP:Math.max(0,alphaHP/maxA), bravoHP:Math.max(0,bravoHP/maxB), dur:Math.max(alphaStats.react,bravoStats.react)/1000, abilities:[] });
+  elapsed += rounds[0].dur;
+  let round=0;
+  while (alphaHP>5 && bravoHP>5 && round<25) {
+    const dur = scenario.roundDur;
+    const aCeil = alphaStats.therm*60, bCeil = bravoStats.therm*60;
+    const aEff = elapsed<aCeil?1:Math.max(0.25,1-(elapsed-aCeil)/aCeil);
+    const bEff = elapsed<bCeil?1:Math.max(0.25,1-(elapsed-bCeil)/bCeil);
+    let aDmgMod=aEff, cStateActive=false;
+    if (alphaChars.some(({char})=>char.modifiers?.cState) && alphaHP/maxA<0.35 && round<3) {
+      aDmgMod *= alphaChars[0].char.modifiers.cState; cStateActive=true;
+    }
+    const bDmg = bravoFP*alphaStats.count*k*dur*bEff;
+    const aDmg = alphaFP*bravoStats.count*k*dur*aDmgMod;
+    alphaHP=Math.max(0,alphaHP-bDmg); bravoHP=Math.max(0,bravoHP-aDmg);
+    elapsed+=dur; round++;
+    const abils=[];
+    if (cStateActive) abils.push({side:'alpha',text:'C-State activated — H3 burst output. 35% damage bonus applied. Metabolically costly.'});
+    if (aEff<0.85) abils.push({side:'alpha',text:`Alpha thermal degrading (${(aEff*100).toFixed(0)}% efficiency).`});
+    if (bEff<0.85) abils.push({side:'bravo',text:`Bravo thermal degrading (${(bEff*100).toFixed(0)}% efficiency).`});
+    rounds.push({ id:`r${round}`,
+      label: round<=2?`Initial Exchange — Round ${round}`:round<=6?`Sustained Engagement — Round ${round}`:`Attrition Phase — Round ${round}`,
+      desc: cStateActive ? `${alphaChars[0].char.name.split(' ').pop()} activates C-state — H3 burst output, transient and metabolically expensive.` :
+        round<=2 ? `Initial fire exchange at ${scenario.label} parameters.` :
+        round<=6 ? `Sustained engagement. ${aEff<0.9?'Alpha thermal load increasing. ':''}${bEff<0.9?'Bravo thermal degrading.':'Endurance differential emerging.'}` :
+        `Attrition decisive. ${aEff<bEff?'Alpha has thermal edge.':bEff<aEff?'Bravo outlasts thermally.':'Matched endurance — grinding engagement.'}`,
+      alphaHP:Math.max(0,alphaHP/maxA), bravoHP:Math.max(0,bravoHP/maxB), dur, abilities:abils });
+  }
+  // Edge analysis
+  const edges=[];
+  const rD = bravoStats.react - alphaStats.react;
+  edges.push({ label:'Reaction Time', holder:rD>15?'ALPHA':rD<-15?'BRAVO':'EVEN',
+    color:rD>15?'var(--alpha)':rD<-15?'var(--bravo)':'var(--text-muted)',
+    mag:`${Math.abs(rD).toFixed(0)}ms gap`,
+    exp:Math.abs(rD)<15?'Near-identical reaction speeds. Initiative effectively neutral.':`${rD>0?'Alpha':'Bravo'} reacts ${Math.abs(rD).toFixed(0)}ms faster. First-shot advantage decisive at short range.` });
+  const sR=alphaStats.str/bravoStats.str;
+  edges.push({ label:'Structural Lethality', holder:sR>1.2?'ALPHA':sR<0.83?'BRAVO':'EVEN',
+    color:sR>1.2?'var(--alpha)':sR<0.83?'var(--bravo)':'var(--text-muted)',
+    mag:`${alphaStats.str.toFixed(1)}× vs ${bravoStats.str.toFixed(1)}×`,
+    exp:sR>1.2?`Alpha outputs ${sR.toFixed(1)}× structural force. Each landed hit does disproportionate damage.`:sR<0.83?`Bravo holds ${(1/sR).toFixed(1)}× force advantage.`:'Similar structural force.' });
+  const cR=alphaStats.cog/bravoStats.cog;
+  edges.push({ label:'Cognition (OODA)', holder:cR>1.2?'ALPHA':cR<0.83?'BRAVO':'EVEN',
+    color:cR>1.2?'var(--alpha)':cR<0.83?'var(--bravo)':'var(--text-muted)',
+    mag:`${alphaStats.cog.toFixed(1)}× vs ${bravoStats.cog.toFixed(1)}×`,
+    exp:cR>1.2?`Alpha processes threats ${cR.toFixed(1)}× faster. Tighter OODA loop.`:cR<0.83?'Bravo holds cognitive edge.':'Comparable processing speed.' });
+  const eR=alphaStats.end/bravoStats.end;
+  edges.push({ label:'Endurance / Thermal', holder:eR>1.2?'ALPHA':eR<0.83?'BRAVO':'EVEN',
+    color:eR>1.2?'var(--alpha)':eR<0.83?'var(--bravo)':'var(--text-muted)',
+    mag:`${(alphaStats.therm).toFixed(0)}min vs ${(bravoStats.therm).toFixed(0)}min`,
+    exp:eR>1.15?`Alpha sustains longer. Bravo degrades first in extended engagements.`:eR<0.87?'Bravo has deeper reserves.':'Comparable staying power.' });
+  const dR=alphaStats.dur/bravoStats.dur;
+  edges.push({ label:'Structural Durability', holder:dR>1.2?'ALPHA':dR<0.83?'BRAVO':'EVEN',
+    color:dR>1.2?'var(--alpha)':dR<0.83?'var(--bravo)':'var(--text-muted)',
+    mag:`${alphaStats.dur.toFixed(1)}× vs ${bravoStats.dur.toFixed(1)}×`,
+    exp:dR>1.2?`Alpha absorbs ${((dR-1)*100).toFixed(0)}% more punishment.`:dR<0.83?'Bravo is harder to bring down.':'Similar damage absorption.' });
+  const aPI=alphaChars.some(({char})=>char.modifiers?.platformImmune), bPI=bravoChars.some(({char})=>char.modifiers?.platformImmune);
+  const aPD=alphaChars.some(({char})=>char.modifiers?.platformDep), bPD=bravoChars.some(({char})=>char.modifiers?.platformDep);
+  if (aPD||bPD||aPI||bPI) {
+    edges.push({ label:'Platform Sovereignty', holder:(aPI&&bPD)?'ALPHA':(bPI&&aPD)?'BRAVO':'EVEN',
+      color:(aPI&&bPD)?'var(--alpha)':(bPI&&aPD)?'var(--bravo)':'var(--text-muted)',
+      mag:`${aPI?'Independent':'Dependent'} vs ${bPI?'Independent':'Dependent'}`,
+      exp:aPD&&!bPD?'Alpha HXL-dependent. Suppressor exposure degrades augmentation.':bPD&&!aPD?'Bravo platform-dependent. Alpha can exploit suppressor tactics.':aPI&&bPI?'Both sides platform-sovereign. Suppression tactics neutralized.':'Platform dependency matched.' });
+  }
+  const alphaFinal=alphaHP/maxA, bravoFinal=bravoHP/maxB;
+  const winner=alphaFinal>bravoFinal+0.05?'alpha':bravoFinal>alphaFinal+0.05?'bravo':'draw';
+  return { rounds, edges, winner, alphaFinal, bravoFinal, alphaStats, bravoStats, elapsed };
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RUN + RENDER
+// ═══════════════════════════════════════════════════════════════
+
+function genericClassColor(c) {
+  if (!c.isGeneric) return null;
+  return { Light:'#10b981', Heavy:'#ef4444', Hybrid:'#00d4ff', Titan:'#a855f7', Baseline:'#6b7b96' }[c.genericClass]||'#6b7b96';
+}
+
+function runCombat() {
+  let alphaChars, bravoChars, alphaLabel, bravoLabel, alphaColor, bravoColor;
+  if (state.mode==='1v1') {
+    if (!state.alpha.char||!state.bravo.char) return;
+    alphaChars = [{ char:state.alpha.char, count:state.alpha.count }];
+    bravoChars = [{ char:state.bravo.char, count:state.bravo.count }];
+    alphaLabel = state.alpha.char.name+(state.alpha.count>1?` ×${state.alpha.count}`:'');
+    bravoLabel = state.bravo.char.name+(state.bravo.count>1?` ×${state.bravo.count}`:'');
+    alphaColor = state.alpha.char.isGeneric?(genericClassColor(state.alpha.char)||'#3b82f6'):(FACTIONS[state.alpha.char.faction]?.color||'#3b82f6');
+    bravoColor = state.bravo.char.isGeneric?(genericClassColor(state.bravo.char)||'#ec4899'):(FACTIONS[state.bravo.char.faction]?.color||'#ec4899');
+  } else {
+    const ar=state.orgAlpha.roster, br=state.orgBravo.roster;
+    if (!ar.length||!br.length) { alert('Add combatants to both organizations.'); return; }
+    alphaChars = ar.map(r=>({ char:ALL_OPERATORS.find(c=>c.id===r.id), count:r.count }));
+    bravoChars = br.map(r=>({ char:ALL_OPERATORS.find(c=>c.id===r.id), count:r.count }));
+    alphaLabel = FACTIONS[state.orgAlpha.faction]?.label||state.orgAlpha.faction;
+    bravoLabel = FACTIONS[state.orgBravo.faction]?.label||state.orgBravo.faction;
+    alphaColor = state.orgAlpha.faction==='Generic'?'#6b7b96':(FACTIONS[state.orgAlpha.faction]?.color||'#3b82f6');
+    bravoColor = state.orgBravo.faction==='Generic'?'#a855f7':(FACTIONS[state.orgBravo.faction]?.color||'#ec4899');
+  }
+  const result = computeCombat(alphaChars, bravoChars, state.scenario, state.env);
+  renderResults(result, alphaChars, bravoChars, alphaLabel, bravoLabel, alphaColor, bravoColor);
+}
+
+function hpColor(pct) { return pct>0.6?'var(--green)':pct>0.3?'var(--gold)':'var(--red)'; }
+function abilityTagsHTML(chars) {
+  const seen={}, out=[];
+  chars.forEach(({char})=>char.abilities.forEach(a=>{ if(!seen[a.id]){seen[a.id]=1;out.push(a);} }));
+  return out.map(a=>`<span class="ability-tag ${a.type}" title="${a.desc}">${a.label}</span>`).join('');
+}
+
+function renderResults(result, alphaChars, bravoChars, alphaLabel, bravoLabel, alphaColor, bravoColor) {
+  document.getElementById('empty-state').style.display='none';
+  const el=document.getElementById('results');
+  el.style.display='block';
+  const { rounds, edges, winner, alphaFinal, bravoFinal, elapsed } = result;
+  const alphaWon=winner==='alpha', bravoWon=winner==='bravo', isDraw=winner==='draw';
+  const winnerColor=alphaWon?alphaColor:bravoWon?bravoColor:'#f59e0b';
+  const winnerLabel=alphaWon?alphaLabel:bravoWon?bravoLabel:'DRAW';
+  const alphaCount=alphaChars.reduce((s,r)=>s+r.count,0);
+  const bravoCount=bravoChars.reduce((s,r)=>s+r.count,0);
+  const totalFP=result.alphaStats.lethal*alphaCount+result.bravoStats.lethal*bravoCount;
+  const aFR=(result.alphaStats.lethal*alphaCount)/totalFP;
+  const bFR=(result.bravoStats.lethal*bravoCount)/totalFP;
+
+  el.innerHTML = `
+    <div class="vs-header">
+      <div class="vs-side vs-side-alpha" style="border-color:${alphaColor}55">
+        <div style="font-family:var(--mono);font-size:0.58rem;color:${alphaColor};letter-spacing:0.1em;margin-bottom:4px">ALPHA</div>
+        <div class="vs-name">${alphaLabel}</div>
+        ${alphaChars.length===1&&alphaChars[0].char.callsign?`<div class="vs-callsign">「 ${alphaChars[0].char.callsign} 」</div>`:''}
+        <div class="vs-class">${alphaChars.map(r=>`${r.char.classLabel}${r.count>1?` ×${r.count}`:''}`).join(' · ')}</div>
+        <div class="ability-row">${abilityTagsHTML(alphaChars)}</div>
+      </div>
+      <div class="vs-divider">
+        <div class="vs-text">VS</div>
+        <div class="vs-count">${alphaCount}v${bravoCount}</div>
+        <div style="font-family:var(--mono);font-size:0.58rem;color:var(--text-muted);margin-top:2px">${state.scenario.icon} ${state.scenario.label}</div>
+        <div style="font-family:var(--mono);font-size:0.58rem;color:var(--text-muted)">${state.env.icon} ${state.env.label}</div>
+      </div>
+      <div class="vs-side vs-side-bravo" style="border-color:${bravoColor}55;text-align:right">
+        <div style="font-family:var(--mono);font-size:0.58rem;color:${bravoColor};letter-spacing:0.1em;margin-bottom:4px">BRAVO</div>
+        <div class="vs-name">${bravoLabel}</div>
+        ${bravoChars.length===1&&bravoChars[0].char.callsign?`<div class="vs-callsign">「 ${bravoChars[0].char.callsign} 」</div>`:''}
+        <div class="vs-class">${bravoChars.map(r=>`${r.char.classLabel}${r.count>1?` ×${r.count}`:''}`).join(' · ')}</div>
+        <div class="ability-row" style="justify-content:flex-end">${abilityTagsHTML(bravoChars)}</div>
+      </div>
+    </div>
+    <div style="margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+        <span style="font-family:var(--mono);font-size:0.58rem;color:${alphaColor}">ALPHA ${(aFR*100).toFixed(0)}%</span>
+        <span style="font-family:var(--mono);font-size:0.58rem;color:var(--text-muted)">LANCHESTER FORCE RATIO</span>
+        <span style="font-family:var(--mono);font-size:0.58rem;color:${bravoColor}">BRAVO ${(bFR*100).toFixed(0)}%</span>
+      </div>
+      <div class="force-gauge">
+        <div class="force-alpha" style="width:${aFR*100}%"></div>
+        <div class="force-bravo" style="width:${bFR*100}%"></div>
+      </div>
+    </div>
+    <div class="verdict-card verdict-${winner}" style="border-color:${winnerColor}44">
+      <div style="font-family:var(--mono);font-size:0.6rem;color:var(--text-muted);letter-spacing:0.12em;margin-bottom:8px">SIMULATION VERDICT</div>
+      <div class="verdict-winner" style="color:${winnerColor}">${isDraw?'⚡ DRAW':`${alphaWon?'🛡':'⚔'} ${winnerLabel}`}</div>
+      <div class="verdict-sub">
+        ${isDraw?'Neither side achieves decisive advantage.':`${alphaWon?'Alpha':'Bravo'} achieves operational superiority.`}
+        ${alphaWon?`Alpha: ${(alphaFinal*100).toFixed(0)}% · Bravo: ${(bravoFinal*100).toFixed(0)}%`:bravoWon?`Bravo: ${(bravoFinal*100).toFixed(0)}% · Alpha: ${(alphaFinal*100).toFixed(0)}%`:`Alpha: ${(alphaFinal*100).toFixed(0)}% · Bravo: ${(bravoFinal*100).toFixed(0)}%`}
+        · Elapsed: ${elapsed.toFixed(0)}s
+      </div>
+    </div>
+    <div class="section-label" style="margin-bottom:10px">Combat Timeline</div>
+    <div class="timeline">
+      ${rounds.map((r,i)=>`
+        <div class="round-card" style="animation-delay:${i*0.05}s">
+          <div class="round-header">
+            <div class="round-label">${r.label}</div>
+            <div class="round-event">${r.dur.toFixed(1)}s</div>
+          </div>
+          <div class="hp-bars">
+            <div class="hp-bar-wrap">
+              <div class="hp-bar-label" style="color:${alphaColor}">${alphaLabel.split(' ')[0].toUpperCase()}</div>
+              <div class="hp-bar-track"><div class="hp-bar-fill" style="width:${(r.alphaHP*100).toFixed(0)}%;background:${alphaColor}"></div></div>
+              <div class="hp-bar-pct" style="color:${hpColor(r.alphaHP)}">${(r.alphaHP*100).toFixed(0)}%</div>
+            </div>
+            <div class="hp-vs">↔</div>
+            <div class="hp-bar-wrap" style="text-align:right">
+              <div class="hp-bar-label" style="color:${bravoColor}">${bravoLabel.split(' ')[0].toUpperCase()}</div>
+              <div class="hp-bar-track"><div class="hp-bar-fill" style="width:${(r.bravoHP*100).toFixed(0)}%;background:${bravoColor};margin-left:auto"></div></div>
+              <div class="hp-bar-pct" style="color:${hpColor(r.bravoHP)}">${(r.bravoHP*100).toFixed(0)}%</div>
+            </div>
+          </div>
+          <div class="round-desc">${r.desc}</div>
+          ${r.abilities.map(a=>`<div class="ability-trigger"><span class="trigger-label">◆ ABILITY:</span>${a.text}</div>`).join('')}
+        </div>`).join('')}
+    </div>
+    <div class="section-label" style="margin-bottom:10px">Edge Analysis</div>
+    <div class="edge-grid" style="margin-bottom:20px">
+      ${edges.map(e=>`
+        <div class="edge-item">
+          <div class="edge-label">${e.label}</div>
+          <div class="edge-holder" style="color:${e.color}">${e.holder}</div>
+          <div class="edge-mag">${e.mag}</div>
+          <div class="edge-exp">${e.exp}</div>
+        </div>`).join('')}
+    </div>
+    ${renderDossiers(alphaChars, bravoChars, alphaColor, bravoColor)}
+    <div class="citation-bar">
+      <div class="citation-label">SCIENTIFIC BASIS</div>
+      <div class="citation-text">${state.scenario.cite} ${state.env.cite} Lanchester Square Law (Lanchester, 1916). Thermal collapse at 40°C core (Gonzalez-Alonso et al., 1999). Reaction baseline 250ms (Welchman, 2010).</div>
+    </div>
+    <div style="height:40px"></div>`;
+}
+
+function renderDossiers(alphaChars, bravoChars, alphaColor, bravoColor) {
+  const chars=[...alphaChars.map(r=>({...r,side:'alpha',color:alphaColor})),...bravoChars.map(r=>({...r,side:'bravo',color:bravoColor}))];
+  return `
+    <div class="section-label" style="margin-bottom:10px">Operator Dossiers</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px">
+      ${chars.map(({char,count,side,color})=>`
+        <div style="border:1px solid ${color}33;border-left:3px solid ${color};border-radius:8px;padding:14px;background:${color}08">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+            <div>
+              <div style="font-family:var(--display);font-size:0.95rem;font-weight:600">${char.name}${char.callsign?` <span style="font-size:0.7rem;color:var(--text-dim);font-weight:400">· ${char.callsign}</span>`:''}</div>
+              <div style="font-family:var(--mono);font-size:0.6rem;color:${color};letter-spacing:0.06em;margin-top:2px">${char.classLabel} · ${FACTIONS[char.faction]?.label||char.faction}${char.born?` · b.${char.born}`:''}</div>
+            </div>
+            <div style="font-family:var(--mono);font-size:0.65rem;color:var(--text-dim)">${side.toUpperCase()}${count>1?` ×${count}`:''}</div>
+          </div>
+          <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.5;margin-bottom:8px">${char.bio}</div>
+          <div style="font-size:0.68rem;color:var(--text-muted);font-style:italic;margin-bottom:8px">${char.specialization}</div>
+          <div class="ability-row">${char.abilities.map(a=>`<span class="ability-tag ${a.type}" title="${a.desc}">${a.label}</span>`).join('')}</div>
+          <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            ${[['STR',char.strength,18],['SPD',char.speed,15],['COG',char.cognition,12],['END',char.endurance,18],['REACT',(1000-char.reactionTime)/10,100],['DUR',char.durability,20]].map(([label,val,max])=>`
+              <div class="stat-row">
+                <div class="stat-label">${label}</div>
+                <div class="stat-bar-wrap"><div class="stat-bar" style="width:${Math.min(100,(val/max*100)).toFixed(0)}%;background:${color}88"></div></div>
+                <div class="stat-val">${label==='REACT'?`${char.reactionTime}ms`:val.toFixed(1)}</div>
+              </div>`).join('')}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+init();
+</script>
+</body>
+</html>
