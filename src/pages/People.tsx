@@ -271,10 +271,10 @@ function CharactersPanel() {
         <div className="character-card">
           <div className="char-faction-stripe stripe-unknown"></div>
           <div className="char-faction-tag tag-unknown">Foundational Research Lineage</div>
-          <div className="char-name">Kassandra Kane</div>
+          <div className="char-name">Dr. Dr. Kassandra Kane</div>
           <div className="char-alias">Psychiatrist &amp; Neurocognitive Adaptation Specialist: b. 2093 | d. n/a (Alive)</div>
           <div className="char-aug">LIGHT-CLASS 1: Light-1</div>
-          <p className="char-bio">Kassandra Kane helped define the human side of augmentation before ParkerGen weaponized that knowledge into caste logic. A psychiatrist and neurocognitive adaptation specialist, she co-developed the original compatibility framework meant to assess identity stability, sensory tolerance, embodiment risk, and psychological survivability under early HXL integration. She raised her children across North America, Europe, and Africa to make them resilient, culturally fluent, and difficult to provincialize. She remains one of the last living witnesses to what augmentation assessment was meant to be before it became class, tier, labor, and prestige.</p>
+          <p className="char-bio">Dr. Kassandra Kane helped define the human side of augmentation before ParkerGen weaponized that knowledge into caste logic. A psychiatrist and neurocognitive adaptation specialist, she co-developed the original compatibility framework meant to assess identity stability, sensory tolerance, embodiment risk, and psychological survivability under early HXL integration. She raised her children across North America, Europe, and Africa to make them resilient, culturally fluent, and difficult to provincialize. She remains one of the last living witnesses to what augmentation assessment was meant to be before it became class, tier, labor, and prestige.</p>
           <div className="char-traits"><div className="char-trait">Light-1</div><div className="char-trait">Clinical Origin Line</div><div className="char-trait">Foundational Research</div><div className="char-trait">Threat: High</div></div>
         </div>
         <div className="character-card">
