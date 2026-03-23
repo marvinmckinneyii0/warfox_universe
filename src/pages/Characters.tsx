@@ -79,7 +79,7 @@ export default function Characters() {
               <div className="char-name">Ilhicamina "Cam" Ochoa</div>
               <div className="char-alias">Bio-Energy Specialist / Systems Optimization Scientist: b. 2119 | d. n/a (Alive)</div>
               <div className="char-aug">LIGHT-CLASS 4: Light-4A</div>
-              <p className="char-bio">Cam Ochoa is a cognition-first energy systems specialist working in ParkerGen's advanced bio-energy and optimization programs. Her expertise lies in metabolic efficiency, power architecture, and the performance economics of augmented bodies. She is not a field-facing figure, but her work affects what advanced augmentation can sustain, how efficiently it operates, and how far future bodies can be pushed. Her influence is technical, quiet, and deeply infrastructural.</p>
+              <p className="char-bio">Cam Ochoa is a cognition-first energy systems specialist working in ParkerGen's advanced bio-energy and optimization programs. His expertise lies in metabolic efficiency, power architecture, and the performance economics of augmented bodies. He is not a field-facing figure, but his work affects what advanced augmentation can sustain, how efficiently it operates, and how far future bodies can be pushed. His influence is technical, quiet, and deeply infrastructural.</p>
               <div className="char-traits"><div className="char-trait">Science Division</div><div className="char-trait">Light-4A</div><div className="char-trait">Threat: High</div></div>
             </div>
             <div className="character-card">
