@@ -22,6 +22,7 @@ export default function Nav() {
         <li><NavLink to="/people">Characters &amp; Factions</NavLink></li>
         <li><NavLink to="/stories">Lore &amp; Stories</NavLink></li>
         <li><NavLink to="/glossary">Glossary</NavLink></li>
+        <li><NavLink to="/comparator">Combat Engine</NavLink></li>
       </ul>
     </nav>
   );

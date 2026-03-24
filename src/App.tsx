@@ -9,6 +9,7 @@ import Timeline from './pages/Timeline';
 import People from './pages/People';
 import Stories from './pages/Stories';
 import Glossary from './pages/Glossary';
+import Comparator from './pages/Comparator';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -65,6 +66,7 @@ function AppLayout() {
         <Route path="/people" element={<People />} />
         <Route path="/stories" element={<Stories />} />
         <Route path="/glossary" element={<Glossary />} />
+        <Route path="/comparator" element={<Comparator />} />
       </Routes>
       <Footer />
     </>
