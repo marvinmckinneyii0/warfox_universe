@@ -12,8 +12,10 @@ export default function Nav() {
   }, []);
 
   return (
-    <nav>
-      <NavLink to="/" className="nav-logo">WFX / ARCHIVE v3.2.0</NavLink>
+    <>
+      <a href="#main-content" className="skip-link">Skip to content</a>
+    <nav aria-label="Main navigation">
+      <NavLink to="/" className="nav-logo" aria-label="WFX Archive home">WFX / ARCHIVE v3.2.0</NavLink>
       <ul className="nav-links">
         <li><NavLink to="/" end>Home</NavLink></li>
         <li><NavLink to="/world">World</NavLink></li>
@@ -24,5 +26,6 @@ export default function Nav() {
         <li><NavLink to="/glossary">Glossary</NavLink></li>
       </ul>
     </nav>
+    </>
   );
 }

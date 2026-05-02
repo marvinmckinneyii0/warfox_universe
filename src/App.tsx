@@ -35,10 +35,12 @@ function AnimateOnScroll() {
       });
     }, { threshold: 0.08 });
 
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const targets = document.querySelectorAll<HTMLElement>(
       '.character-card, .lore-block, .faction-card, .region-card, .story-slot, .story-empty, .timeline-entry, .hxl-block, .hxl-phase, .glossary-entry'
     );
     targets.forEach((el, i) => {
+      if (reducedMotion) return;
       el.style.opacity = '0';
       el.style.transform = 'translateY(14px)';
       el.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
@@ -57,6 +59,7 @@ function AppLayout() {
       <ScrollToTop />
       <AnimateOnScroll />
       <Nav />
+      <main id="main-content">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/world" element={<World />} />
@@ -66,6 +69,7 @@ function AppLayout() {
         <Route path="/stories" element={<Stories />} />
         <Route path="/glossary" element={<Glossary />} />
       </Routes>
+      </main>
       <Footer />
     </>
   );
