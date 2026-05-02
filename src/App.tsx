@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
+import Breadcrumb from './components/Breadcrumb';
 import Home from './pages/Home';
 import World from './pages/World';
 import Tech from './pages/Tech';
@@ -59,6 +60,7 @@ function AppLayout() {
       <ScrollToTop />
       <AnimateOnScroll />
       <Nav />
+      <Breadcrumb />
       <main id="main-content">
       <Routes>
         <Route path="/" element={<Home />} />

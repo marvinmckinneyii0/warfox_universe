@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 
+const cx = (to: string, text: string) => <Link to={to} className="cx-link">{text}</Link>;
+
 export default function Home() {
   return (
-    <div className="page-content">
+    <div className="page-content page-content--home">
       <section className="hero">
         <div className="container">
           <div className="hero-tag">CLASSIFICATION: ACTIVE ARCHIVE / WARFOX SEQUENCE WORLD RECORD</div>
@@ -33,12 +35,12 @@ export default function Home() {
             <div className="hxl-block">
               <div className="lore-block-label">The Discovery</div>
               <h3 style={{fontFamily:'var(--sans)',fontSize:'1rem',fontWeight:700,color:'var(--text-bright)',marginBottom:'1rem'}}>What Changed Everything</h3>
-              <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8}}>In 2041, a xenobiological substrate was pulled from deep Saharan excavation sites. Ancient. Non-terrestrial. Dormant for a hundred and fifty thousand years. The researchers who found it had no framework for what it was. What they discovered, slowly, over the next decade, was that it could interface with human neural tissue without triggering rejection. That discovery rewrote the future of the human body. It was called the Xenobiotic Integration Substrate — XIS. The technology built above it was called HXL Mesh. The company that controlled it called itself ParkerGen Industries. And the world it created was not the world its inventors intended.</p>
+              <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8}}>In 2041, a xenobiological substrate was pulled from deep Saharan excavation sites. Ancient. Non-terrestrial. Dormant for a hundred and fifty thousand years. The researchers who found it had no framework for what it was. What they discovered, slowly, over the next decade, was that it could interface with human neural tissue without triggering rejection. That discovery rewrote the future of the human body. It was called the Xenobiotic Integration Substrate — {cx('/glossary','XIS')}. The technology built above it was called {cx('/tech','HXL Mesh')}. The company that controlled it called itself {cx('/people','ParkerGen Industries')}. And the world it created was not the world its inventors intended. {cx('/timeline','→ See the full timeline')}</p>
             </div>
             <div className="hxl-block">
               <div className="lore-block-label">The Architecture of Control</div>
               <h3 style={{fontFamily:'var(--sans)',fontSize:'1rem',fontWeight:700,color:'var(--text-bright)',marginBottom:'1rem'}}>Enhancement as Infrastructure</h3>
-              <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8}}>HXL Mesh grows from the patient's own cells. It is not a device. It does not look like machinery. It is living tissue, woven into the body's vascular and neural architecture, and under stress it reveals itself as glowing hexagonal patterns beneath the skin. Enhancement through biology, not replacement with hardware. That is the sales language. The reality is that the mesh is theirs. Miss a calibration cycle and capability degrades. Fall behind on maintenance payments and the platform that keeps you stable begins to withdraw. The body ParkerGen builds for you is licensed. The dependency is not incidental. It was engineered.</p>
+              <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8}}>{cx('/tech','HXL Mesh')} grows from the patient's own cells. It is not a device. It does not look like machinery. It is living tissue, woven into the body's vascular and neural architecture, and under stress it reveals itself as glowing hexagonal patterns beneath the skin. Enhancement through biology, not replacement with hardware. That is the sales language. The reality is that the mesh is theirs. Miss a calibration cycle and capability degrades. Fall behind on maintenance payments and the {cx('/tech','Exocort platform')} that keeps you stable begins to withdraw. The body {cx('/people','ParkerGen')} builds for you is licensed. The dependency is not incidental. It was engineered. {cx('/glossary','→ See augmentation architecture terms')}</p>
             </div>
           </div>
 
@@ -46,18 +48,25 @@ export default function Home() {
             <div className="hxl-block">
               <div className="lore-block-label">The Divide</div>
               <h3 style={{fontFamily:'var(--sans)',fontSize:'1rem',fontWeight:700,color:'var(--text-bright)',marginBottom:'1rem'}}>Class Written on the Body</h3>
-              <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8}}>By 2148, augmentation class has replaced wealth as the most legible marker of social position, because augmentation class is social position made visible. Elite enhancements are invisible at rest; the kind that make you faster, sharper, more capable without ever announcing themselves. Working-class augmentations are not. The hexagonal vascular patterns that appear under physical stress at lower tiers are impossible to conceal. The thermal signatures, the altered proportions, the visible maintenance hardware: all of it legible, all of it permanent. The enhancement divide is not just stratification. It is stratification written on the body and worn every day.</p>
+              <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8}}>By 2148, {cx('/tech','augmentation class')} has replaced wealth as the most legible marker of social position, because augmentation class is social position made visible. Elite enhancements are invisible at rest; the kind that make you faster, sharper, more capable without ever announcing themselves. Working-class augmentations are not. The hexagonal vascular patterns that appear under physical stress at lower tiers are impossible to conceal. The thermal signatures, the altered proportions, the visible maintenance hardware: all of it legible, all of it permanent. The enhancement divide is not just stratification. It is stratification written on the body and worn every day. {cx('/world','→ See regional distribution')}</p>
             </div>
             <div className="hxl-block">
               <div className="lore-block-label">The Stakes</div>
               <h3 style={{fontFamily:'var(--sans)',fontSize:'1rem',fontWeight:700,color:'var(--text-bright)',marginBottom:'1rem'}}>What the Story Is About</h3>
-              <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8}}>A federal investigator is assigned to a death that the official record calls natural causes. A resistance network operates inside legitimate institutions under cover identities, building toward something most of its members don't fully understand. A corporation faces the first serious threat to fifty years of biological monopoly. And somewhere in all of it, a dead scientist's research still exists; the blueprint for augmentation that belongs to no one, that cannot be leased or revoked, that ParkerGen buried before it could reach the public record. The Warfox Sequence is the story of what happens when that research starts moving again.</p>
+              <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8}}>A federal investigator is assigned to a death that the official record calls natural causes. A resistance network operates inside legitimate institutions under cover identities, building toward something most of its members don't fully understand. A corporation faces the first serious threat to fifty years of biological monopoly. And somewhere in all of it, a dead scientist's research still exists; the blueprint for augmentation that belongs to no one, that cannot be leased or revoked, that {cx('/people','ParkerGen')} buried before it could reach the public record. The Warfox Sequence is the story of what happens when that research starts moving again. {cx('/stories','→ Read the field records')}</p>
             </div>
           </div>
 
           <div style={{background:'var(--surface)',border:'1px solid var(--border)',borderLeft:'3px solid var(--teal-dim)',padding:'2rem 2.5rem',marginBottom:'4rem'}}>
             <div style={{fontFamily:'var(--mono)',fontSize:'0.42rem',color:'var(--teal-dim)',letterSpacing:'0.25em',textTransform:'uppercase',marginBottom:'0.5rem'}}>Thematic Core</div>
             <p style={{fontSize:'0.78rem',color:'var(--text-dim)',lineHeight:1.8,maxWidth:'90ch'}}>The Warfox Sequence is not a story about technology. It is a story about who owns the future of the human body, what they do with that ownership, and what it costs the people who cannot afford to opt out. It asks what liberation means when the thing you need to be free is built into your biology and belongs to someone else. It asks whether institutions built to enforce the law can survive contact with power that wrote the law. And it asks what kind of people choose to fight a system that has made itself indispensable.</p>
+            <div className="related-links" style={{marginTop:'1.5rem'}}>
+              <span className="related-links-label">Explore</span>
+              <Link to="/people" className="related-link">Characters &amp; Factions</Link>
+              <Link to="/tech" className="related-link">Technology Reference</Link>
+              <Link to="/timeline" className="related-link">Historical Timeline</Link>
+              <Link to="/glossary" className="related-link">Glossary</Link>
+            </div>
           </div>
         </div>
       </section>

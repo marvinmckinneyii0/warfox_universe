@@ -1,3 +1,7 @@
+import { Link } from 'react-router-dom';
+
+const cx = (to: string, text: string) => <Link to={to} className="cx-link">{text}</Link>;
+
 export default function Timeline() {
   return (
     <div className="page-content">
@@ -36,7 +40,7 @@ export default function Timeline() {
             <div className="timeline-entry">
               <div className="timeline-year">2108–2120</div>
               <div className="timeline-title">HXL Mesh Development</div>
-              <p className="timeline-body">Dr. Theo Kane develops the first-generation HexaLattice Interface Layer (HXL) using XIS-derived interface chemistry as the basis for stable biological integration. Early human trials; some documented, many not; produce mixed results, and integration failure rates remain high in the first generation. ParkerGen Industries later emerges as the dominant patent holder and XIS supply chain controller after appropriating and industrializing Theo Kane's foundational work.</p>
+              <p className="timeline-body">{cx('/people','Dr. Theo Kane')} develops the first-generation HexaLattice Interface Layer ({cx('/glossary','HXL')}) using {cx('/glossary','XIS')}-derived interface chemistry as the basis for stable biological integration. Early human trials; some documented, many not; produce mixed results, and integration failure rates remain high in the first generation. {cx('/people','ParkerGen Industries')} later emerges as the dominant patent holder and XIS supply chain controller after appropriating and industrializing Theo Kane's foundational work.</p>
               <div className="tl-tags"><span className="tl-tag">HXL</span><span className="tl-tag">Theo Kane</span><span className="tl-tag">ParkerGen</span><span className="tl-tag">Mesh Development</span><span className="tl-tag">Appropriation</span></div>
             </div>
             <div className="timeline-entry">
@@ -48,7 +52,7 @@ export default function Timeline() {
             <div className="timeline-entry">
               <div className="timeline-year">2120</div>
               <div className="timeline-title">AlphaGuard Founded: Lagos Charter</div>
-              <p className="timeline-body">AlphaGuard is established under the Lagos Charter as a treaty-chartered transnational enforcement and stabilization body designed to prevent licensed megacorporations, private military systems, and closed augmentation regimes from hardening into de facto sovereign powers. Rather than a conventional peacekeeping force, AlphaGuard is structured for escalation control, treaty enforcement, biosurveillance response, and lawful intervention against rogue augmented threats.</p>
+              <p className="timeline-body">{cx('/people','AlphaGuard')} is established under the Lagos Charter as a treaty-chartered transnational enforcement and stabilization body designed to prevent licensed megacorporations, private military systems, and closed {cx('/tech','augmentation')} regimes from hardening into de facto sovereign powers. Rather than a conventional peacekeeping force, AlphaGuard is structured for escalation control, treaty enforcement, biosurveillance response, and lawful intervention against rogue augmented threats.</p>
               <div className="tl-tags"><span className="tl-tag">AlphaGuard</span><span className="tl-tag">Lagos Charter</span><span className="tl-tag">Treaty Enforcement</span><span className="tl-tag">Escalation Control</span></div>
             </div>
             <div className="timeline-entry">
@@ -78,7 +82,7 @@ export default function Timeline() {
             <div className="timeline-entry">
               <div className="timeline-year">2138</div>
               <div className="timeline-title">Murder of Dr. Theo Kane</div>
-              <p className="timeline-body">Dr. Theo Kane, inventor of the HXL framework, is killed in what authorities classify as a laboratory accident at ParkerGen's Nairobi research campus. He had been compiling proof across multiple fronts: that ParkerGen had engineered platform dependency into the Exocort and Bodam systems as a control mechanism rather than a technical necessity; that independent augmentation outside corporate supply chains was architecturally achievable; and that HXL had been repurposed for undisclosed military programs and non-consensual human trials far beyond its original design intent. He leaves behind a wife and two sons. His archive is seized, reviewed by ParkerGen security, and removed from the public record. The blueprint for platform-independent augmentation is buried with it.</p>
+              <p className="timeline-body">{cx('/people','Dr. Theo Kane')}, inventor of the {cx('/glossary','HXL')} framework, is killed in what authorities classify as a laboratory accident at {cx('/people','ParkerGen')}'s Nairobi research campus. He had been compiling proof across multiple fronts: that ParkerGen had engineered platform dependency into the {cx('/tech','Exocort')} and Bodam systems as a control mechanism rather than a technical necessity; that independent augmentation outside corporate supply chains was architecturally achievable; and that HXL had been repurposed for undisclosed military programs and non-consensual human trials far beyond its original design intent. He leaves behind a wife and two sons. His archive is seized, reviewed by ParkerGen security, and removed from the public record. The blueprint for platform-independent augmentation is buried with it.</p>
               <div className="tl-tags"><span className="tl-tag" style={{color:'var(--warfox)',borderColor:'var(--warfox-dim)'}}>Theo Kane</span><span className="tl-tag" style={{color:'var(--warfox)',borderColor:'var(--warfox-dim)'}}>Murder</span><span className="tl-tag">ParkerGen</span><span className="tl-tag">Suppression</span><span className="tl-tag">Platform Independence</span><span className="tl-tag">Military Repurposing</span></div>
             </div>
             <div className="timeline-entry">
@@ -96,13 +100,13 @@ export default function Timeline() {
             <div className="timeline-entry">
               <div className="timeline-year">2143</div>
               <div className="timeline-title">The Lopez Incident</div>
-              <p className="timeline-body">A rescue operation connected to Hugo Lopez's family results in the death of Maria Lopez. Sonia Lopez, then a child, is present and witnesses the event firsthand. The incident becomes the defining fracture of her life; and an intelligence failure with long-term operational consequences that are not yet fully visible.</p>
+              <p className="timeline-body">A rescue operation connected to {cx('/people','Hugo Lopez')}'s family results in the death of Maria Lopez. {cx('/people','Sonia Lopez')}, then a child, is present and witnesses the event firsthand. The incident becomes the defining fracture of her life; and an intelligence failure with long-term operational consequences that are not yet fully visible.</p>
               <div className="tl-tags"><span className="tl-tag">Lopez Incident</span><span className="tl-tag">Maria Lopez</span><span className="tl-tag">Sonia Lopez</span><span className="tl-tag">Intelligence Failure</span></div>
             </div>
             <div className="timeline-entry">
               <div className="timeline-year">2145</div>
               <div className="timeline-title">Tigris Basin Collapse</div>
-              <p className="timeline-body">The Tigris Basin undergoes accelerated environmental collapse; aquifer depletion, soil salinization, and ecosystem failure crossing irreversible thresholds within a compressed operational window. Subsequent analysis establishes that the collapse trajectory was not natural. It was engineered: ParkerGen applied a proprietary environmental modeling framework derived from internal research to identify and exploit legal intervention thresholds, accelerating basin degradation at a rate that evaded regulatory triggers while achieving effective finality. The research framework used had been developed by a ParkerGen-contracted scientist with direct ancestral and refugee ties to the region. She had not known what her methodology would be used for. The basin had been her displacement origin. It was now gone.</p>
+              <p className="timeline-body">The Tigris Basin undergoes accelerated environmental collapse; aquifer depletion, soil salinization, and ecosystem failure crossing irreversible thresholds within a compressed operational window. Subsequent analysis establishes that the collapse trajectory was not natural. It was engineered: {cx('/people','ParkerGen')} applied a proprietary environmental modeling framework derived from internal research to identify and exploit legal intervention thresholds, accelerating basin degradation at a rate that evaded regulatory triggers while achieving effective finality. The research framework used had been developed by a ParkerGen-contracted scientist with direct ancestral and refugee ties to the region. She had not known what her methodology would be used for. The basin had been her displacement origin. It was now gone. {cx('/stories','→ Read: The Tigris Margin')}</p>
               <div className="tl-tags"><span className="tl-tag" style={{color:'var(--warfox)',borderColor:'var(--warfox-dim)'}}>Environmental Crime</span><span className="tl-tag">ParkerGen</span><span className="tl-tag">Tigris Basin</span><span className="tl-tag">Yassin</span><span className="tl-tag">Suppression</span></div>
             </div>
             <div className="timeline-entry">
@@ -114,7 +118,7 @@ export default function Timeline() {
             <div className="timeline-entry">
               <div className="timeline-year">2148</div>
               <div className="timeline-title">Murder of Dr. Angela Lamb</div>
-              <p className="timeline-body">Dr. Angela Lamb (b. 2112), Senior Director of Clinical Trials &amp; Compliance and former FDA scientist, uncovers evidence of systematic illegal human experimentation inside ParkerGen-linked programs. After internal escalation channels fail, she prepares a dead-man's-switch file drop. She is assassinated; the official cause of death is recorded as cerebral hemorrhage. Her death becomes the inciting incident for Veronica Valdez's federal investigation and catalyzes the broader events of the primary narrative.</p>
+              <p className="timeline-body">{cx('/people','Dr. Angela Lamb')} (b. 2112), Senior Director of Clinical Trials &amp; Compliance and former FDA scientist, uncovers evidence of systematic illegal human experimentation inside {cx('/people','ParkerGen')}-linked programs. After internal escalation channels fail, she prepares a dead-man's-switch file drop. She is assassinated; the official cause of death is recorded as cerebral hemorrhage. Her death becomes the inciting incident for {cx('/people','Veronica Valdez')}'s federal investigation and catalyzes the broader events of the primary narrative.</p>
               <div className="tl-tags"><span className="tl-tag" style={{color:'var(--warfox)',borderColor:'var(--warfox-dim)'}}>Angela Lamb</span><span className="tl-tag" style={{color:'var(--warfox)',borderColor:'var(--warfox-dim)'}}>Murder</span><span className="tl-tag">Whistleblower</span><span className="tl-tag">Compliance</span><span className="tl-tag">Human Experimentation</span><span className="tl-tag" style={{color:'var(--fbi)',borderColor:'var(--fbi-dim)'}}>Inciting Event</span></div>
             </div>
           </div>
@@ -134,6 +138,14 @@ export default function Timeline() {
                 </tbody>
               </table>
             </div>
+          </div>
+          <div className="related-links" style={{marginTop:'3rem'}}>
+            <span className="related-links-label">Related</span>
+            <Link to="/people" className="related-link">Characters &amp; Factions</Link>
+            <Link to="/tech" className="related-link">Technology Reference</Link>
+            <Link to="/glossary" className="related-link">Glossary of Terms</Link>
+            <Link to="/stories" className="related-link">Field Records</Link>
+            <Link to="/world" className="related-link">World &amp; Regions</Link>
           </div>
         </div>
       </section>

@@ -1,3 +1,7 @@
+import { Link } from 'react-router-dom';
+
+const cx = (to: string, text: string) => <Link to={to} className="cx-link">{text}</Link>;
+
 export default function Glossary() {
   return (
     <div className="page-content">
@@ -92,8 +96,8 @@ export default function Glossary() {
               <div className="glossary-entry">
                 <div className="glossary-term">XIS</div>
                 <div className="glossary-subterm">Xenobiotic Substrate</div>
-                <div className="glossary-def">Anomalous xenobiotic substrate originating from the fragmentation of a single extraterrestrial body approximately 150,000 years ago. Interface properties with human mitochondrial architecture enabled the development of HXL Mesh. XIS is the precursor substrate; HXL is what Dr. Theo Kane built using it as the foundation. Four active deposit locations are known: Saharan (Earth baseline, ParkerGen-refined), Belt (radiation-modified, vacuum-adapted), Martian (perchlorate-modified, independent research), and Europan (pressure-adapted, subsurface-ocean-modified, potential biological incorporation from Europa's ocean chemistry; uncharacterized and uncontrolled). The crystallographic and redox properties that define XIS are conserved across all locations. Secondary properties vary by 150,000 years of distinct environmental exposure.</div>
-                <div className="glossary-xref">See also: HXL Mesh, S-Locus, XIS Variants</div>
+                <div className="glossary-def">Anomalous xenobiotic substrate originating from the fragmentation of a single extraterrestrial body approximately 150,000 years ago. Interface properties with human mitochondrial architecture enabled the development of HXL Mesh. XIS is the precursor substrate; HXL is what {cx('/people','Dr. Theo Kane')} built using it as the foundation. Four active deposit locations are known: Saharan (Earth baseline, {cx('/people','ParkerGen')}-refined), Belt (radiation-modified, vacuum-adapted), Martian (perchlorate-modified, independent research), and Europan (pressure-adapted, subsurface-ocean-modified, potential biological incorporation from Europa's ocean chemistry; uncharacterized and uncontrolled). {cx('/world','→ See regional distribution')}</div>
+                <div className="glossary-xref">See also: HXL Mesh, S-Locus, XIS Variants &nbsp;·&nbsp; {cx('/timeline','Discovery: 2041 Timeline')}</div>
               </div>
               <div className="glossary-entry">
                 <div className="glossary-term">S-Locus</div>
@@ -103,8 +107,8 @@ export default function Glossary() {
               <div className="glossary-entry">
                 <div className="glossary-term">HXL Mesh</div>
                 <div className="glossary-subterm">HexaLattice Interface Layer</div>
-                <div className="glossary-def">The universal bioengineered augmentation substrate invented by Dr. Theo Kane, derived from XIS and the S-Locus interface architecture. Living tissue grown from the patient's own stem cells; vascular networks in hexagonal tessellation, neural processing nodes at hexagon vertices, graphene-reinforced protein matrices for structural support. Platform dependency is enforced through Exocort update cycles and Reseed Nanite reseeding of the SLL; not pharmaceutical supply chains. The dependency is structural, not chemical. Theo's original HXL architecture was human-centered and platform-independent. ParkerGen's commercialized version inverted both properties.</div>
-                <div className="glossary-xref">See also: SLL, Reseed Nanites, Exocort Update Cycle, XIS</div>
+                <div className="glossary-def">The universal bioengineered augmentation substrate invented by {cx('/people','Dr. Theo Kane')}, derived from XIS and the S-Locus interface architecture. Living tissue grown from the patient's own stem cells; vascular networks in hexagonal tessellation, neural processing nodes at hexagon vertices, graphene-reinforced protein matrices for structural support. Platform dependency is enforced through {cx('/tech','Exocort update cycles')} and Reseed Nanite reseeding of the SLL; not pharmaceutical supply chains. The dependency is structural, not chemical. Theo's original HXL architecture was human-centered and platform-independent. {cx('/people','ParkerGen')}'s commercialized version inverted both properties.</div>
+                <div className="glossary-xref">See also: SLL, Reseed Nanites, Exocort Update Cycle, XIS &nbsp;·&nbsp; {cx('/tech','Full tech architecture →')}</div>
               </div>
               <div className="glossary-entry">
                 <div className="glossary-term">SLL</div>
@@ -194,8 +198,8 @@ export default function Glossary() {
               <div className="glossary-entry">
                 <div className="glossary-term">APM</div>
                 <div className="glossary-subterm">Adaptation Potential Metrics</div>
-                <div className="glossary-def">The original diagnostic framework co-developed by Dr. Theo Kane and Dr. Kassandra Adair Kane. A multidimensional clinical instrument assessing safe developmental potential across five axes: identity coherence, cognitive homeostatic range, relational anchoring, motivational coherence, and cultural integration. Output was a narrative profile, not a numerical score. Human-centered and constraint-first; measuring what a person could safely become rather than what category they could be sold into. ParkerGen collapsed the APM into numerical tier placement for productization. Dr. Kassandra Kane published a formal objection in 2144. The paper was suppressed by ParkerGen's epistemic consolidation apparatus.</div>
-                <div className="glossary-xref">See also: Epistemic Consolidation, HXL Mesh, Exocort Architecture</div>
+                <div className="glossary-def">The original diagnostic framework co-developed by {cx('/people','Dr. Theo Kane')} and {cx('/people','Dr. Kassandra Adair Kane')}. A multidimensional clinical instrument assessing safe developmental potential across five axes: identity coherence, cognitive homeostatic range, relational anchoring, motivational coherence, and cultural integration. Output was a narrative profile, not a numerical score. Human-centered and constraint-first; measuring what a person could safely become rather than what category they could be sold into. {cx('/people','ParkerGen')} collapsed the APM into numerical tier placement for productization. Dr. Kassandra Kane published a formal objection in 2144. The paper was suppressed by ParkerGen's epistemic consolidation apparatus.</div>
+                <div className="glossary-xref">See also: Epistemic Consolidation, HXL Mesh, Exocort Architecture &nbsp;·&nbsp; {cx('/timeline','Timeline: Theo Kane')}</div>
               </div>
               <div className="glossary-entry">
                 <div className="glossary-term">Epistemic Consolidation</div>
@@ -218,7 +222,7 @@ export default function Glossary() {
               <div className="glossary-block-hdr">VIII / Operational Terminology</div>
               <div className="glossary-entry">
                 <div className="glossary-term">Zero Division</div>
-                <div className="glossary-def">ParkerGen's covert warfare apparatus. The umbrella command structure for all deniable, off-books, and semi-deniable operational units. Sub-unit structure: White Units are on-books institutional security; not part of Zero Division proper. Grey Units handle infiltration, surveillance, corporate espionage, and long-game destabilization; augmentation profile Light-2 to Hybrid-3. Black Units execute surgical violence; assassination, kidnapping, black-site raids, traitor elimination, and counter-resistance action. Crimson Units handle catastrophic containment and destruction; deployed when something must be erased without recoverable evidence; Hyb-4 standard, cognitive-forward, irreversible by design. Built into ParkerGen's founding architecture as a permanent response to anticipated resistance. Current operational status following ParkerGen's institutional collapse: unaccounted for.</div>
+                <div className="glossary-def">{cx('/people','ParkerGen')}'s covert warfare apparatus. The umbrella command structure for all deniable, off-books, and semi-deniable operational units. Sub-unit structure: White Units are on-books institutional security; not part of Zero Division proper. Grey Units handle infiltration, surveillance, corporate espionage, and long-game destabilization; augmentation profile Light-2 to Hybrid-3. Black Units execute surgical violence; assassination, kidnapping, black-site raids, traitor elimination, and counter-resistance action. Crimson Units handle catastrophic containment and destruction; deployed when something must be erased without recoverable evidence; Hyb-4 standard, cognitive-forward, irreversible by design. Built into ParkerGen's founding architecture as a permanent response to anticipated resistance. Current operational status following ParkerGen's institutional collapse: unaccounted for. {cx('/people','→ Zero Division personnel records')}</div>
               </div>
               <div className="glossary-entry">
                 <div className="glossary-term">PROJECT: FAMILIAR</div>
@@ -400,6 +404,13 @@ export default function Glossary() {
               </div>
             </div>
 
+          </div>
+          <div className="related-links" style={{marginTop:'3rem'}}>
+            <span className="related-links-label">Related</span>
+            <Link to="/tech" className="related-link">Technology Reference</Link>
+            <Link to="/people" className="related-link">Characters &amp; Factions</Link>
+            <Link to="/timeline" className="related-link">Historical Timeline</Link>
+            <Link to="/world" className="related-link">World &amp; Regions</Link>
           </div>
         </div>
       </section>
