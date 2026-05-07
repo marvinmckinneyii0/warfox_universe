@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import Nav from './components/Nav';
 import Footer from './components/Footer';
 import Breadcrumb from './components/Breadcrumb';
@@ -10,6 +10,8 @@ import Timeline from './pages/Timeline';
 import People from './pages/People';
 import Stories from './pages/Stories';
 import Glossary from './pages/Glossary';
+
+const Landing = lazy(() => import('./pages/Landing'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -63,13 +65,13 @@ function AppLayout() {
       <Breadcrumb />
       <main id="main-content">
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/world" element={<World />} />
-        <Route path="/tech" element={<Tech />} />
-        <Route path="/timeline" element={<Timeline />} />
-        <Route path="/people" element={<People />} />
-        <Route path="/stories" element={<Stories />} />
-        <Route path="/glossary" element={<Glossary />} />
+        <Route index element={<Home />} />
+        <Route path="world" element={<World />} />
+        <Route path="tech" element={<Tech />} />
+        <Route path="timeline" element={<Timeline />} />
+        <Route path="people" element={<People />} />
+        <Route path="stories" element={<Stories />} />
+        <Route path="glossary" element={<Glossary />} />
       </Routes>
       </main>
       <Footer />
@@ -80,7 +82,17 @@ function AppLayout() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppLayout />
+      <Routes>
+        <Route
+          path="/landing"
+          element={
+            <Suspense fallback={null}>
+              <Landing />
+            </Suspense>
+          }
+        />
+        <Route path="/*" element={<AppLayout />} />
+      </Routes>
     </BrowserRouter>
   );
 }
